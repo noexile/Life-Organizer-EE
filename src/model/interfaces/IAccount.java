@@ -11,11 +11,7 @@ public interface IAccount {
 
     void insertMoney(BigDecimal money);
 
-    void generateTask(User user);
-
-    Currency getCurrency();
-
-    BigDecimal getAmount();
+    double getAmount();
 
     String getAccountName();
 }
