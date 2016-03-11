@@ -2,6 +2,9 @@ package model.accounts;
 
 import model.events.PaymentEvent;
 import java.util.ArrayList;
+import java.util.Collections;
+
+
 
 public abstract class Account {
 	
@@ -18,7 +21,7 @@ public abstract class Account {
 	}
 
     public ArrayList<PaymentEvent> getPaymentHistory() {
-        return paymentHistory;
+        return (ArrayList<PaymentEvent>) Collections.unmodifiableList(this.paymentHistory);
     }
 
     public void addPaymentEvent(PaymentEvent payment) {
