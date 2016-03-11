@@ -131,10 +131,8 @@ public class User {
         this.debitAccounts.add(account);
     }
 
-    // TODO
 	public String getEmail() {
-		// TODO Auto-generated method stub
-		return null;
+		return this.email;
 	}
 
 }
