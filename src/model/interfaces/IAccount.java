@@ -7,9 +7,9 @@ import java.util.Currency;
 
 public interface IAccount {
 
-    void withdrawMoney(BigDecimal money);
+    void withdrawMoney(double money);
 
-    void insertMoney(BigDecimal money);
+    void insertMoney(double money);
 
     double getAmount();
 
