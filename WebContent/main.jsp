@@ -11,7 +11,7 @@
 </head>
 <body>
 <header>
-	<a href="Main.html"><p><img src = "resources/MainLogo.jpg" alt="logo" /></a><big>Hello <%= user.getUserName() %></big></p>
+	<a href="main.jsp"><p><img src = "resources/MainLogo.jpg" alt="logo" /></a><big>Hello <% if(user.getUserName() != null) {user.getUserName();} %></big></p>
 	<table border="2" bordercolor= "cyan" cellpadding="10">
 	<div class="test">
 		<p id="demo"></p>

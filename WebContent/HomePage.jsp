@@ -18,7 +18,7 @@
 				<label><input type="checkbox" name="remember_me" id="remember_me">	Remember me on this computer</label>
 				</p>
 				<p class="submit"><input type="submit" value="Login"></p>
-				<p><a href="SignUp.html">New to Life Organizer ? Click here to Register</a></p>
+				<p><a href="SignUp.jsp">New to Life Organizer ? Click here to Register</a></p>
 			</form>
 		</div>
 	</section>
