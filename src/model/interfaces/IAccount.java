@@ -7,11 +7,15 @@ import java.util.Currency;
 
 public interface IAccount {
 
-    void withdrawMoney(double money);
+    void withdrawMoney(BigDecimal money);
 
-    void insertMoney(double money);
+    void insertMoney(BigDecimal money);
 
-    double getAmount();
+//    void generateTask(User user);
+
+//    Currency getCurrency();
+
+    BigDecimal getAmount();
 
     String getAccountName();
 }

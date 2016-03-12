@@ -37,10 +37,9 @@ public class DBUserDAO implements IUserDAO {
 	public List<User> getAllUsers() {
 		ArrayList<User> users = new ArrayList<>();
 		
-		Statement st = null;
 		try {
-			st = DBManager.getInstance().getConnection().createStatement();
-			ResultSet rs = st.executeQuery("SELECT username, pass, email FROM " + DBManager.DB_NAME + "." + DBManager.ColumnNames.USERS.toString().toLowerCase());
+			Statement st = DBManager.getInstance().getConnection().createStatement();
+			ResultSet rs = st.executeQuery("SELECT username, user_id, pass, email FROM " + DBManager.DB_NAME + "." + DBManager.ColumnNames.USERS.toString().toLowerCase() + ";");
 			
 			while(rs.next()) {
 				String username = rs.getString("username");
@@ -53,11 +52,7 @@ public class DBUserDAO implements IUserDAO {
 			
 		} catch (SQLException e) {
 			System.out.println("Error executing the statement in getAllUsers: " + e.getMessage());
-		} finally {
-			try {
-				st.close();
-			} catch (SQLException e) {}
-		}
+		} 
 		
 		return users;
 	}

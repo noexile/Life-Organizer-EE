@@ -3,23 +3,20 @@ package model.accounts;
 import model.events.PaymentEvent;
 import model.interfaces.IAccount;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
-
-
 
 public abstract class Account implements IAccount {
 	
 	private String accountName;
-	protected double amount;
+	protected BigDecimal amount;
 	private ArrayList<PaymentEvent> paymentHistory;
-    private int dbUid;
 
-	public Account(String accountName, double amount, int dbUid) {
+	public Account(String accountName, BigDecimal amount) {
         this.paymentHistory = new ArrayList<>();
 		this.setAccountName(accountName);
 		this.amount = amount;
-        this.dbUid = dbUid;
 	}
 
     public ArrayList<PaymentEvent> getPaymentHistory() {
@@ -30,7 +27,7 @@ public abstract class Account implements IAccount {
         this.paymentHistory.add(payment);
     }
 
-    public double getAmount() {
+    public BigDecimal getAmount() {
 		return amount;
 	}
 	
@@ -40,15 +37,12 @@ public abstract class Account implements IAccount {
         }
 	}
 
-    public int getDbUid() {
-        return dbUid;
-    }
-
     public String getAccountName() {
 		return this.accountName;
 	}
 
-    public abstract void withdrawMoney(double money);
+    public abstract void withdrawMoney(BigDecimal money);
 
-    public abstract void insertMoney(double money);
+    public abstract void insertMoney(BigDecimal money);
+
 }

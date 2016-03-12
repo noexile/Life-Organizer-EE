@@ -42,14 +42,6 @@ public class DBManager {
 		createSchema(conn);
 		addTablesToSchema(conn);
 		
-		try {
-			if(conn != null) {
-				conn.close();
-				System.out.println("connection closed");
-			}
-		} catch(SQLException se){
-			se.printStackTrace();
-		}
 	}
 	
 	public static DBManager getInstance() {
@@ -105,6 +97,15 @@ public class DBManager {
 
 	public Connection getConnection() {
 		return conn;
+	}
+	
+	public void closeConnection() {
+		try {
+			this.conn.close();
+			System.out.println("Connection closed!");
+		} catch (SQLException e) {
+			System.out.println("Problem while closing the connection: " + e.getMessage());
+		}
 	}
 
 }

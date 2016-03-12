@@ -1,19 +1,21 @@
 package model.accounts;
 
+import java.math.BigDecimal;
+
 public class DebitAccount extends Account {
 
-    public DebitAccount(String accountName, double amount, int dbUid) {
-        super(accountName, amount, dbUid);
+    public DebitAccount(String accountName, BigDecimal amount) {
+        super(accountName, amount);
     }
 
     @Override
-    public void withdrawMoney(double money) {
-        super.amount -= money;
+    public void withdrawMoney(BigDecimal money) {
+        super.amount.subtract(money);
     }
 
     @Override
-    public void insertMoney(double money) {
-        super.amount += money;
+    public void insertMoney(BigDecimal money) {
+        super.amount.add(money);
     }
 
 }
