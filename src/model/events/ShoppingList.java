@@ -7,11 +7,13 @@ import java.util.Map;
 
 public class ShoppingList {
 
+	private String name;
 	private boolean isPaid;
 	private double amount;
 	private HashMap<String, Double> shoppingEntries;
 
-	public ShoppingList() {
+	public ShoppingList(String name) {
+		this.setName(name);
 		this.amount = 0;
 		this.isPaid = false;
 		this.shoppingEntries = new HashMap<String, Double>();
@@ -70,7 +72,15 @@ public class ShoppingList {
 		return this.isPaid;
 	}
 
-	HashMap<String, Double> getShoppingEntries() {
+	public void setName(String name){
+		this.name = name;
+	}
+	
+	public String getName(){
+		return this.name;
+	}
+	
+	public HashMap<String, Double> getShoppingEntries() {
 		return shoppingEntries;
 	}
 

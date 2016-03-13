@@ -1,18 +1,22 @@
 package model.events;
 
-import java.util.Calendar;
+import java.time.LocalDate;
 
 public abstract class DatedEvent extends Event {
 
-    private Calendar dateTime;
+    private LocalDate dateTime;
 
-    DatedEvent(String title, String description, Calendar dateTime) {
+    DatedEvent(String title, String description, LocalDate dateTime) {
         super(title, description);
 
         this.dateTime = dateTime;
     }
 
-    public Calendar getDateTime() {
+    public LocalDate getDateTime() {
         return dateTime;
+    }
+    
+    public void setDate(LocalDate dateTime){
+    	this.dateTime = dateTime;
     }
 }
