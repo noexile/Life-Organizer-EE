@@ -28,7 +28,7 @@
 			<form action="" method="add">
 				<input type="button" value="Show tasks for today"
 					style="height: 50px; width: 500px"> </br> </br> <a
-					href="AddTask.html"><input type="button" value="ADD NEW TASK"
+					href="AddPayment.jsp"><input type="button" value="ADD NEW PAYMENT"
 					style="height: 50px; width: 500px"></a>
 
 			</form>
