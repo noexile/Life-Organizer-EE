@@ -13,6 +13,7 @@ import javax.servlet.http.HttpSession;
 
 import model.dataBase.DBUserDAO;
 import model.user.User;
+import model.user.userManager;
 
 @WebServlet("/SignUpServlet")
 public class SignUpServlet extends HttpServlet {
@@ -71,7 +72,7 @@ public class SignUpServlet extends HttpServlet {
 		User newUser = dao.registerUser(new User(username, password, email));
 
 		RequestDispatcher rd = request.getRequestDispatcher("main.jsp");
-		session.setAttribute("loggedUserManager", newUser);
+		session.setAttribute("loggedUserManager", new userManager(newUser));
 		rd.forward(request, response);
 		
 	}
