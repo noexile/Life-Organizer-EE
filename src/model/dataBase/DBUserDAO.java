@@ -12,7 +12,12 @@ import model.user.User;
 
 public class DBUserDAO implements IUserDAO {
 
-	private List<User> allUsers = getAllUsers();
+	private List<User> allUsers;
+	
+	public DBUserDAO(){
+		this.allUsers = this.getAllUsers();
+	}
+	
 	
 	@Override
 	public void addUser(User user) {
@@ -57,18 +62,6 @@ public class DBUserDAO implements IUserDAO {
 		return users;
 	}
 
-	@Override
-	public void registerUser(String username, String password, String email) {
-
-		if(checkIfUserExists(username)) {
-			System.out.println("The username is already taken.");
-			return;
-		}
-		
-		User newUser = new User(username, password, email);
-		this.allUsers.add(newUser); // adds user to cache
-		addUser(newUser); // adds user to DB	
-	}
 
 	@Override
 	public boolean checkIfUserExists(String username) {
@@ -78,6 +71,26 @@ public class DBUserDAO implements IUserDAO {
 			}
 		}
 		return false;
+	}
+
+
+	@Override
+	public boolean checkIfEmailExists(String email) {
+		for(User u : this.allUsers) {
+			if (u.getEmail().equals(email)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+
+	@Override
+	public void registerUser(User user) {
+		
+		this.allUsers.add(user); // adds user to cache
+		addUser(user); // adds user to DB
+		
 	}
 
 }
