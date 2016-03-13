@@ -1,32 +1,33 @@
 package model.user;
 
+import java.sql.Date;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
-import javax.websocket.Session;
-
-import com.sun.org.apache.bcel.internal.generic.DALOAD;
+import com.mysql.jdbc.PreparedStatement;
 
 import model.accounts.DebitAccount;
 import model.dataBase.DBManager;
-import model.dataBase.DBUserDAO;
 import model.events.DatedEvent;
 import model.events.NotificationEvent;
 import model.events.PaymentEvent;
 import model.events.ShoppingList;
 import model.events.TODOEvent;
+import model.exceptions.DBManagerException;
 import model.exceptions.IllegalAmountException;
 
 public class userManager {
 	
 	private User user;
-	private DBManager dbmanager = DBManager.getInstance();
+	private DBManager dbmanager;
 	
 	public userManager(User user) {
 		this.user = user;
+		this.dbmanager = DBManager.getInstance();
 	}
 	
 	/*-------------PAYMENT EVENT-------------*/
@@ -34,19 +35,34 @@ public class userManager {
        this.user.addPaymentEvent(event);
 	}
 	
+	public void addPaymentEventINDataBase(PaymentEvent event) throws SQLException{
+		
+		String statement = "INSERT INTO "+this.dbmanager.getDbName()+".payment_events (user_id,pe_name,description,amount,is_paid,for_date) VALUES (?,?,?,?,?,?);";
+		PreparedStatement st = (PreparedStatement) this.dbmanager.getConnection().prepareStatement(statement);
+		st.setInt(1, this.user.getUniqueDBId());
+		st.setString(2, event.getTitle());
+		st.setString(3, event.getDescription());
+		st.setDouble(4, event.getAmount());
+		st.setBoolean(5, event.getIsPaid());
+		st.setDate(6, Date.valueOf(event.getDateTime()));
+		int n = st.executeUpdate();	
+		
+	}
+	
 	public void removePaymentEvent(PaymentEvent event) {
 		this.user.removePaymentEvent(event);
 	}
 	
-	public ArrayList<DatedEvent> getEvents() {
-		return (ArrayList<DatedEvent>) Collections.unmodifiableList(this.user.getEvents());
+	public List<DatedEvent> getEvents() {
+		return Collections.unmodifiableList((ArrayList<DatedEvent>)(this.user.getEvents()));
 	}
 	
 	public void addEvent(DatedEvent event){
 		this.user.addEvent(event);
 	}
 	
-	public void createPaymentEvent(String eventTitle, String description, double amount, boolean isIncome, boolean isPaid, LocalDate forDate) throws IllegalAmountException{
+	public void createPaymentEvent(String eventTitle, String description, double amount, boolean isIncome, boolean isPaid, LocalDate forDate) throws IllegalAmountException, SQLException{
+		this.addPaymentEventINDataBase(new PaymentEvent(eventTitle, description, amount, isIncome, isPaid, forDate));
 		this.user.createPaymentEvent(eventTitle, description, amount, isIncome, isPaid, forDate);
 	}
 	
@@ -132,7 +148,6 @@ public class userManager {
 	public void modifyTODO(TODOEvent todo, String name, String description){
 		this.user.modifyTODO(todo, name, description);
 	}
-	
 	
 	/*--------------DebitAccounts ---------------*/
 	

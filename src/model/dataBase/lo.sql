@@ -13,10 +13,9 @@ pe_id int PRIMARY KEY AUTO_INCREMENT,
 user_id int NOT NULL,
 pe_name VARCHAR(25) NOT NULL,
 description VARCHAR(255), 
-ammount DOUBLE PRECISION UNSIGNED,
-is_payed BOOLEAN NOT NULL,
+amount DOUBLE PRECISION UNSIGNED,
+is_paid BOOLEAN NOT NULL,
 for_date DATE NOT NULL,
-for_time TIME NOT NULL,
 FOREIGN KEY (user_id) REFERENCES lo.users(user_id)
 );
 

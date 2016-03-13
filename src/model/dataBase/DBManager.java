@@ -6,6 +6,8 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+import model.dataBase.DBManager.ColumnNames;
+
 
 public class DBManager {
 
@@ -56,8 +58,8 @@ public class DBManager {
 		PreparedStatement statement = null;
 		
 		String users = "CREATE TABLE IF NOT EXISTS " + getDbName() + "." + ColumnNames.USERS.toString().toLowerCase() + " (user_id int PRIMARY KEY AUTO_INCREMENT, username VARCHAR(25) UNIQUE NOT NULL, pass VARCHAR(25) NOT NULL, email VARCHAR(25) UNIQUE NOT NULL)";
-		String payment_events = "CREATE TABLE IF NOT EXISTS " + getDbName() + "." + ColumnNames.PAYMENT_EVENTS.toString().toLowerCase() +  " (pe_id int PRIMARY KEY AUTO_INCREMENT, user_id int NOT NULL, pe_name VARCHAR(25) NOT NULL, description VARCHAR(255), ammount DOUBLE PRECISION UNSIGNED, is_payed BOOLEAN NOT NULL, for_date DATE NOT NULL, for_time TIME NOT NULL, FOREIGN KEY (user_id) REFERENCES lo.users(user_id))";
-		String todos = "CREATE TABLE IF NOT EXISTS " + getDbName() + "." + ColumnNames.TODOS.toString().toLowerCase() +  " (pe_id int PRIMARY KEY AUTO_INCREMENT, user_id int NOT NULL, pe_name VARCHAR(25) NOT NULL, description VARCHAR(255), FOREIGN KEY (user_id) REFERENCES lo.users(user_id))";
+		String payment_events = "CREATE TABLE IF NOT EXISTS " + DB_NAME + "." + ColumnNames.PAYMENT_EVENTS.toString().toLowerCase() +  " (pe_id int PRIMARY KEY AUTO_INCREMENT, user_id int NOT NULL, pe_name VARCHAR(25) NOT NULL, description VARCHAR(255), amount DOUBLE PRECISION UNSIGNED, is_paid BOOLEAN NOT NULL, for_date DATE NOT NULL, FOREIGN KEY (user_id) REFERENCES lo.users(user_id))";
+		String todos = "CREATE TABLE IF NOT EXISTS " + getDbName() + "." + ColumnNames.TODOS.toString().toLowerCase() +  " (todo_id int PRIMARY KEY AUTO_INCREMENT,user_id int NOT NULL,todo_name VARCHAR(25) NOT NULL,todo_type VARCHAR(25) NOT NULL,description VARCHAR(255),FOREIGN KEY (user_id) REFERENCES lo.users(user_id))";
 		String notification_events = "CREATE TABLE IF NOT EXISTS " + getDbName() + "." + ColumnNames.NOTIFICATION_EVENTS.toString().toLowerCase() +  " (ne_id int PRIMARY KEY AUTO_INCREMENT, user_id int NOT NULL, ne_name VARCHAR(25) NOT NULL, description VARCHAR(255), for_date DATE NOT NULL, FOREIGN KEY (user_id) REFERENCES lo.users(user_id))";
 		String shopping_lists = "CREATE TABLE IF NOT EXISTS " + getDbName() + "." + ColumnNames.SHOPPING_LISTS.toString().toLowerCase() +  " (pe_id int PRIMARY KEY AUTO_INCREMENT, list_id int NOT NULL UNIQUE, list_name VARCHAR(25) NOT NULL, user_id int NOT NULL, FOREIGN KEY (user_id) REFERENCES lo.users(user_id))";
 		String shopping_entries = "CREATE TABLE IF NOT EXISTS " + getDbName() + "." + ColumnNames.SHOPPING_ENTRIES.toString().toLowerCase() +  " (pe_id int PRIMARY KEY AUTO_INCREMENT, item_name VARCHAR(100) NOT NULL, item_value DOUBLE PRECISION, list_id int NOT NULL, FOREIGN KEY (list_id) REFERENCES lo.shopping_lists(list_id))";
