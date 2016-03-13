@@ -138,5 +138,10 @@ public class userManager {
 		 this.user.removeNotificationEvent(event);
 	 }
 	 
+	 /*--------------GETTERS--------------*/
+	 
+	 public String getUserName(){
+		 return this.user.getUserName();
+	 }
 	 
 }

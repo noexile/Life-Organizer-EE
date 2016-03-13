@@ -1,8 +1,9 @@
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
 	pageEncoding="ISO-8859-1"%>
 <%@ page import="model.user.User"%>
+<%@ page import="model.user.userManager"%>
 <%
-	User user = (User) session.getAttribute("loggedUser");
+	userManager manager = (userManager) session.getAttribute("loggedUserManager");
 %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
@@ -14,7 +15,7 @@
 <body>
 	<header> <a href="main.jsp"><p>
 			<img src="resources/MainLogo.jpg" alt="logo" /></a>
-	<big>Hello <%=(user == null ? "" : user.getUserName())%></big>
+	<big>Hello <%=(manager == null ? "" : manager.getUserName())%></big>
 	</p>
 	<table border="2" bordercolor="cyan" cellpadding="10">
 		<div class="test">
