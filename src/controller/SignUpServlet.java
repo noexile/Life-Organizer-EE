@@ -66,12 +66,12 @@ public class SignUpServlet extends HttpServlet {
 		}
 		
 		// if ok - create new user and log in
-		User newUser = new User(username, password, email);
+		
 
-		dao.registerUser(newUser);
+		User newUser = dao.registerUser(new User(username, password, email));
 
 		RequestDispatcher rd = request.getRequestDispatcher("main.jsp");
-		session.setAttribute("loggedUser", newUser);
+		session.setAttribute("loggedUserManager", newUser);
 		rd.forward(request, response);
 		
 	}

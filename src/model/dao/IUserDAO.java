@@ -7,7 +7,7 @@ public interface IUserDAO {
 	
 	void addUser(User user);
 	List<User> getAllUsers();
-	void registerUser(User user);
+	User registerUser(User user);
 	boolean checkIfUserExists(String username);
 	boolean checkIfEmailExists(String email);
 }

@@ -86,11 +86,20 @@ public class DBUserDAO implements IUserDAO {
 
 
 	@Override
-	public void registerUser(User user) {
+	public User registerUser(User user) {
 		
-		this.allUsers.add(user); // adds user to cache
 		addUser(user); // adds user to DB
+		User theNewUserWithID = null;
 		
+		for(User use : this.getAllUsers()){
+			if(use.getUserName().equals(user.getUserName())){
+				theNewUserWithID = new User(use.getUserName(), use.getPassword(), use.getUniqueDBId(), use.getEmail());
+			}
+		}
+		
+		this.allUsers.add(theNewUserWithID); // adds user to cache
+		
+		return theNewUserWithID;
 	}
 
 }

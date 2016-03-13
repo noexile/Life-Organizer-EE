@@ -11,6 +11,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import model.dataBase.DBUserDAO;
 import model.user.User;
+import model.user.userManager;
 
 @WebServlet("/LoginServlet")
 public class LoginServlet extends HttpServlet {
@@ -28,7 +29,7 @@ public class LoginServlet extends HttpServlet {
 		if (loggedUser == null || loggedUser.getUserName().trim().isEmpty()) {
 			response.sendRedirect("ErrorHomePage.jsp");
 		} else {
-			request.getSession().setAttribute("loggedUser", loggedUser);
+			request.getSession().setAttribute("loggedUserManager", new userManager(loggedUser));
 			response.sendRedirect("main.jsp");
 		}
 		
@@ -45,7 +46,7 @@ public class LoginServlet extends HttpServlet {
 		for(User u : allUsers) {
 			if (u.getUserName().equals(user)) {
 				if (u.getPassword().equals(pass)) {
-					User loggedUser = new User(u.getUserName(), u.getPassword(), u.getEmail());
+					User loggedUser = new User(u.getUserName(),u.getPassword(),u.getUniqueDBId(),u.getEmail());
 					System.out.println("found user");
 					return loggedUser;
 				}
