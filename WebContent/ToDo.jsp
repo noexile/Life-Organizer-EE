@@ -1,4 +1,6 @@
-<!DOCTYPE html>
+<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
+    pageEncoding="ISO-8859-1"%>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
 <meta charset="utf-8">
@@ -8,8 +10,7 @@
 <body>
 	<header>
 			<br/><br/><a href="main.jsp"><img src = "resources/MainLogo.jpg" alt="logo" /></a><br/><br/><br/>
-			<nav>
-				
+
 			<section class="right_side">
 			<table class="tasksSize" frame="box" bordercolor= "cyan" class="tableSignUp" align="right">
 				<tr class="forstRow" valign="top">
@@ -72,28 +73,8 @@
 				</tr>
 			</table>
 			</section>
-			<section>
-				<table border="2" bordercolor= "cyan" cellpadding="10">
-					<caption><p>Menu</p></caption>
-					<tr>		
-					<td bgcolor= "cyan"><p>TO DO LIST</p></td>
-					</tr>
-					<tr>
-					<td><a href="MyCallendar.html"><font color="black"><p>My Callendar</p></font></a></td>
-					</tr>
-					<tr>
-					<td><a href="Tasks.html"><font color="black"><p>My Tasks</p></font></a></td>
-					</tr>
-					<tr>
-					<td><a href="MyAccounts.html"><font color="black"><p>My Accounts</p></font></a></td>
-					</tr>
-					<tr>
-					<td><a href="MyShoppingList.html"><font color="black"><p>My Shopping<br/></br></br>List</p></font></a></td>
-					</tr>
-			
-				</table>
-			</section>	
-				
+			<nav>
+				<%@ include file="MenuMap.jsp" %>				
 			</nav>
 		
 		</header>
