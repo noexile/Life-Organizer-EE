@@ -23,7 +23,7 @@ public class DBUserDAO implements IUserDAO {
 	public void addUser(User user) {
 		PreparedStatement st = null;
 		try {
-			st = DBManager.getInstance().getConnection().prepareStatement("INSERT INTO " + DBManager.DB_NAME + "." + DBManager.ColumnNames.USERS.toString().toLowerCase() + " (username, pass, email) VALUES ( ? , ? , ? )" );
+			st = DBManager.getInstance().getConnection().prepareStatement("INSERT INTO " + DBManager.getDbName() + "." + DBManager.ColumnNames.USERS.toString().toLowerCase() + " (username, pass, email) VALUES ( ? , ? , ? )" );
 			st.setString(1, user.getUserName());
 			st.setString(2, user.getPassword());
 			st.setString(3, user.getEmail());
@@ -44,7 +44,7 @@ public class DBUserDAO implements IUserDAO {
 		
 		try {
 			Statement st = DBManager.getInstance().getConnection().createStatement();
-			ResultSet rs = st.executeQuery("SELECT username, user_id, pass, email FROM " + DBManager.DB_NAME + "." + DBManager.ColumnNames.USERS.toString().toLowerCase() + ";");
+			ResultSet rs = st.executeQuery("SELECT username, user_id, pass, email FROM " + DBManager.getDbName() + "." + DBManager.ColumnNames.USERS.toString().toLowerCase() + ";");
 			
 			while(rs.next()) {
 				String username = rs.getString("username");

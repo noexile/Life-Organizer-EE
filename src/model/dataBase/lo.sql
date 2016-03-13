@@ -21,9 +21,10 @@ FOREIGN KEY (user_id) REFERENCES lo.users(user_id)
 );
 
 CREATE TABLE lo.todos (
-pe_id int PRIMARY KEY AUTO_INCREMENT,
+todo_id int PRIMARY KEY AUTO_INCREMENT,
 user_id int NOT NULL,
-pe_name VARCHAR(25) NOT NULL,
+todo_name VARCHAR(25) NOT NULL,
+todo_type VARCHAR(25) NOT NULL,
 description VARCHAR(255),
 FOREIGN KEY (user_id) REFERENCES lo.users(user_id)
 );

@@ -2,16 +2,14 @@ package model.events;
 
 public class TODOEvent extends Event{
 
-	public enum Type {ShortTerm, MidTerm, LongTerm}
-	
-	public Type type;
+	public String type;
 
-	public TODOEvent(String name,String description,TODOEvent.Type type){
-		super(name,description);
+	public TODOEvent(String name,String description, String type){
+		super(name, description);
 		this.type = type;
 	}
 	
-	public Type getType(){
+	public String getType(){
 		return this.type;
 	}
 

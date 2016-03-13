@@ -60,18 +60,9 @@
 							<li><a>Remove</a></li>
 						</ul>
 					</td>
-					<td>
-						<input type="text" style="height:20px; width:100px"></br>
-						<input type="button" value="Add Short Term ToDo"></br></br>
-						
-						<input type="text" style="height:20px; width:100px"></br>
-						<input type="button" value="Add Mid Term ToDo"></br></br>
-						
-						<input type="text" style="height:20px; width:100px"></br>
-						<input type="button" value="Add Long Term ToDo"></br></br>
-					</td>
 				</tr>
 			</table>
+				<a href="AddToDo.jsp"><button>Add ToDo</button></a>
 			</section>
 			<nav>
 				<%@ include file="MenuMap.jsp" %>				

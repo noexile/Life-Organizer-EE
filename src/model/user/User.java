@@ -25,7 +25,7 @@ public class User {
 	private String email;
 
 	private ArrayList<DatedEvent> events;
-	private HashMap<TODOEvent.Type, ArrayList<TODOEvent>> todos;//type -> events
+	private HashMap<String, ArrayList<TODOEvent>> todos;//type -> events
 	private ArrayList<ShoppingList> shoppingList;
 	private ArrayList<DebitAccount> debitAccounts;
 	private ArrayList<NotificationEvent> notifications;
@@ -265,7 +265,7 @@ public class User {
 	
 	/*--------------TODO LIST EVENT---------------*/
 	
-	protected void addTODO(TODOEvent.Type type, TODOEvent event){
+	protected void addTODO(String type, TODOEvent event){
 		if (!this.todos.containsKey(type)){
             this.todos.put(type, new ArrayList<TODOEvent>());
         }
@@ -273,7 +273,7 @@ public class User {
         this.todos.get(type).add(event);
 	}
 
-    protected ArrayList<TODOEvent> getTodos(TODOEvent.Type type){
+    protected ArrayList<TODOEvent> getTodos(String type){
         if (!this.todos.containsKey(type)){
             this.todos.put(type, new ArrayList<TODOEvent>());
         }
@@ -288,7 +288,7 @@ public class User {
 			} catch (NotExistException e) {}
 		}
     	
-    	TODOEvent.Type type = event.getType();
+    	String type = event.getType();
     	for(TODOEvent currEvent : this.getTodos(type)){
     		if(currEvent.getTitle().equals(event.getTitle())){
     			this.getTodos(type).remove(currEvent);
@@ -296,7 +296,7 @@ public class User {
     	}
     }
 	
-    protected void createTODO(String name, String description, TODOEvent.Type type) {
+    protected void createTODO(String name, String description, String type) {
 		/*
 		 * isIncome will be button (radio?) and will be a must to continue - no
 		 * need for check in the OOP isPayed will be button (radio?) and will be a must to continue - no need for check in the OOP

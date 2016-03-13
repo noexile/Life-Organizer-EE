@@ -1,10 +1,18 @@
 package model.user;
 
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
 
+import javax.websocket.Session;
+
+import com.sun.org.apache.bcel.internal.generic.DALOAD;
+
 import model.accounts.DebitAccount;
+import model.dataBase.DBManager;
+import model.dataBase.DBUserDAO;
 import model.events.DatedEvent;
 import model.events.NotificationEvent;
 import model.events.PaymentEvent;
@@ -15,6 +23,7 @@ import model.exceptions.IllegalAmountException;
 public class userManager {
 	
 	private User user;
+	private DBManager dbmanager = DBManager.getInstance();
 	
 	public userManager(User user) {
 		this.user = user;
@@ -89,11 +98,26 @@ public class userManager {
 	
 	/*--------------TODO LIST EVENT---------------*/
 
-	public void addTODO(TODOEvent.Type type, TODOEvent event){
-		this.user.addTODO(type, event);
+	public void addTODO(String type, TODOEvent event){
+		try {
+			this.dbmanager.getConnection().setAutoCommit(false);
+			int user_id = this.user.getUniqueDBId();
+			Statement st = this.dbmanager.getConnection().createStatement();
+			String insertToDo = "INSERT INTO lo.todos (user_id, todo_name, todo_type, description) VALUES (" + user_id + ", '" + event.getTitle() + "', '" + event.getType() + "', '" + event.getDescription() + "');";
+			this.user.addTODO(type, event);
+			
+			st.execute(insertToDo);
+			this.dbmanager.getConnection().commit();
+			this.dbmanager.getConnection().setAutoCommit(false);
+		} catch (SQLException e) {
+			System.out.println("Error in executing TODO import into DB: " + e.getMessage());
+			try {
+				this.dbmanager.getConnection().rollback();
+			} catch (SQLException e1) {}
+		}
 	}
 
-    public ArrayList<TODOEvent> getTodos(TODOEvent.Type type){
+    public ArrayList<TODOEvent> getTodos(String type){
         return (ArrayList<TODOEvent>) Collections.unmodifiableList(this.user.getTodos(type));
     }
 
@@ -101,7 +125,7 @@ public class userManager {
 		this.user.removeTODOEvent(event);
 	}
 	
-	public void createTODO(String name, String description, TODOEvent.Type type){
+	public void createTODO(String name, String description, String type){
 		this.user.createTODO(name, description, type);
 	}
 	
