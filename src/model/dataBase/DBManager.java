@@ -8,7 +8,7 @@ import java.sql.Statement;
 
 public class DBManager {
 
-	enum ColumnNames {USERS, PAYMENT_EVENTS, TODOS, NOTIFICATION_EVENTS, SHOPPING_LISTS, SHOPPING_ENTRIES}
+	public enum ColumnNames {USERS, PAYMENT_EVENTS, TODOS, NOTIFICATION_EVENTS, SHOPPING_LISTS, SHOPPING_ENTRIES}
 
 	final String JDBC_DRIVER = "com.mysql.jdbc.Driver";  
 	final String DB_URL = "jdbc:mysql://localhost:3306/?useSSL=false";
