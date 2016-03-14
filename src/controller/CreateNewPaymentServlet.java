@@ -33,6 +33,8 @@ public class CreateNewPaymentServlet extends HttpServlet {
 		String amount = request.getParameter("amount");
 		this.setSessionMessage(session, null);
 		
+		amount.replace(',', '.');
+		
 		if(!(this.validateUsername(name, request))){
 			this.setSessionMessage(session,"Invalid name of event !");
 			errorDispatcher.forward(request, response);
@@ -60,7 +62,7 @@ public class CreateNewPaymentServlet extends HttpServlet {
 		UserManager manager = (UserManager) session.getAttribute("loggedUserManager");
 		try {
 			try {
-				manager.createPaymentEvent(name, description, Integer.parseInt(amount), this.isIncome(statusPayment), this.isPaid(statusPaid), LocalDate.parse(date));
+				manager.createPaymentEvent(name, description, Double.parseDouble(amount), this.isIncome(statusPayment), this.isPaid(statusPaid), LocalDate.parse(date));
 			} catch (SQLException e1) {
 				e1.printStackTrace();
 			}
