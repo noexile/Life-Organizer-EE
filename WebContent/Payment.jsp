@@ -59,7 +59,7 @@
 				</tr>
 				<tr valign="bottom">
 					<td>
-						<a href="AddTask.html"><button>Add Task</button></a>
+						<a href="AddPayment.jsp"><button>Add Task</button></a>
 					</td>
 				</tr>
 			</table>

@@ -16,7 +16,7 @@ import model.events.DatedEvent;
 import model.events.PaymentEvent;
 import model.exceptions.IllegalAmountException;
 import model.exceptions.IncorrectInputException;
-import model.user.userManager;
+import model.user.UserManager;
 
 @WebServlet("/CreateNewPaymentServlet")
 public class CreateNewPaymentServlet extends HttpServlet {
@@ -57,7 +57,7 @@ public class CreateNewPaymentServlet extends HttpServlet {
 			return;
 		}
 		
-		userManager manager = (userManager) session.getAttribute("loggedUserManager");
+		UserManager manager = (UserManager) session.getAttribute("loggedUserManager");
 		try {
 			try {
 				manager.createPaymentEvent(name, description, Integer.parseInt(amount), this.isIncome(statusPayment), this.isPaid(statusPaid), LocalDate.parse(date));

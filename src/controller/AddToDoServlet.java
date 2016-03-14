@@ -11,8 +11,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import model.events.TODOEvent;
-import model.user.userManager;
-import sun.rmi.server.Dispatcher;
+import model.user.UserManager;
 
 @WebServlet("/AddToDoServlet")
 public class AddToDoServlet extends HttpServlet {
@@ -43,7 +42,7 @@ public class AddToDoServlet extends HttpServlet {
 		
 		// add new todo
 		dispatcher = request.getRequestDispatcher("ToDo.jsp");
-		userManager manager = (userManager) session.getAttribute("loggedUserManager");	
+		UserManager manager = (UserManager) session.getAttribute("loggedUserManager");	
 		TODOEvent todo = new TODOEvent(name, desc, term);
 		
 		manager.addTODO(term, todo);

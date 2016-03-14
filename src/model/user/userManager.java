@@ -17,15 +17,14 @@ import model.events.NotificationEvent;
 import model.events.PaymentEvent;
 import model.events.ShoppingList;
 import model.events.TODOEvent;
-import model.exceptions.DBManagerException;
 import model.exceptions.IllegalAmountException;
 
-public class userManager {
+public class UserManager {
 	
 	private User user;
 	private DBManager dbmanager;
 	
-	public userManager(User user) {
+	public UserManager(User user) {
 		this.user = user;
 		this.dbmanager = DBManager.getInstance();
 	}
@@ -37,7 +36,7 @@ public class userManager {
 	
 	public void addPaymentEventINDataBase(PaymentEvent event) throws SQLException{
 		
-		String statement = "INSERT INTO "+this.dbmanager.getDbName()+".payment_events (user_id,pe_name,description,amount,is_paid,for_date) VALUES (?,?,?,?,?,?);";
+		String statement = "INSERT INTO " + DBManager.getDbName() + ".payment_events (user_id,pe_name,description,amount,is_paid,for_date) VALUES (?,?,?,?,?,?);";
 		PreparedStatement st = (PreparedStatement) this.dbmanager.getConnection().prepareStatement(statement);
 		st.setInt(1, this.user.getUniqueDBId());
 		st.setString(2, event.getTitle());
@@ -120,11 +119,12 @@ public class userManager {
 			int user_id = this.user.getUniqueDBId();
 			Statement st = this.dbmanager.getConnection().createStatement();
 			String insertToDo = "INSERT INTO lo.todos (user_id, todo_name, todo_type, description) VALUES (" + user_id + ", '" + event.getTitle() + "', '" + event.getType() + "', '" + event.getDescription() + "');";
-			this.user.addTODO(type, event);
-			
 			st.execute(insertToDo);
+			
 			this.dbmanager.getConnection().commit();
 			this.dbmanager.getConnection().setAutoCommit(false);
+			
+			this.user.addTODO(type, event);
 		} catch (SQLException e) {
 			System.out.println("Error in executing TODO import into DB: " + e.getMessage());
 			try {

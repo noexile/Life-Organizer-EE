@@ -1,9 +1,9 @@
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
 	pageEncoding="ISO-8859-1"%>
 <%@ page import="model.user.User"%>
-<%@ page import="model.user.userManager"%>
+<%@ page import="model.user.UserManager"%>
 <%
-	userManager manager = (userManager) session.getAttribute("loggedUserManager");
+	UserManager manager = (UserManager) session.getAttribute("loggedUserManager");
 %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
