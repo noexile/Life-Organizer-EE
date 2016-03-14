@@ -11,13 +11,39 @@
 	<header>
 			<br/><br/><a href="main.jsp"><img src = "resources/MainLogo.jpg" alt="logo" /></a>
 			<div class="Shop">
-			<p>Shopping List</p>
-			1.ProductName
-			<input type="text" value="ProductName"></br>
-			2.Amount
-			<input type="Amount" value="Amount"></br>
-			<input type="submit" value="Add to list" >
-			<input type="submit" value="Create List" >
+				<p>Shopping Lists:</p>
+				<table>
+					<tr>
+						<td>
+							 1.
+						</td>
+						<td>
+							nyakakvi shopping listi
+						</td>
+						<td>
+							edit
+						</td>
+						<td>
+							delete
+						</td>
+					</tr>
+					<tr>
+						<td>
+							 2.
+						</td>
+						<td>
+							 oshte shopping listi
+						</td>
+						<td>
+							edit
+						</td>
+						<td>
+							delete
+						</td>
+					</tr>
+				</table>
+				
+				<p align="left"><a href="AddShoppingList.jsp"><button>New Shopping List</button></a></p>
 			</div>
 			<nav>
 				<%@ include file="MenuMap.jsp" %>	
