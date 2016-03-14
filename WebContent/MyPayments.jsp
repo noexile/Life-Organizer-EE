@@ -12,50 +12,220 @@
 		<header>
 			<br/><br/><a href="main.jsp"><img src = "resources/MainLogo.jpg" alt="logo" /></a><br/><br/><br/>
 			<section class="right_side">
-			<table class="tasksSize" frame="box" bordercolor= "cyan" class="tableSignUp">
+			<form>
+				<input type="date" name="date" autocomplete="on">
+				<select name="status">
+  					<option value="paid">Paid</option>
+  					<option value="topay">ToPay</option>
+  					<option value="all">All</option>
+  				</select>
+  				<input type="submit" value="SHOW ME BRO">
+			</form>
+			<table  frame="box">
+				<caption>FOR DATEEEE</caption>
 				<tr class="forstRow" valign="top">
-					<td class="firstColumn">
-						<a>Task Name:</a>
+					<td>
+					<%@ include file="Payment.jsp" %>
 					</td>
-					<td class="secondColumn">
-						<a>Description:</a>
-					</td>		
-					<td class="thirdColumn">
-						<a></a>
-					</td>	
-					<td class="fourthColumn">
-						<a></a>
-					</td>				
+					<td>
+						<form>
+							<input type="submit" value="View" style="height:50px">
+						</form>
+					</td>			
 				</tr>
-				<tr valign="top">
+				<tr class="forstRow" valign="top">
 					<td>
-						<ul>
-							<li>Task 1</li>
-							<li>Task 2</li>
-							<li>Task 3</li>
-						</ul>
+					<%@ include file="Payment.jsp" %>
 					</td>
 					<td>
-						<ul>
-							<li>task description...</li>
-							<li>task description...</li>
-							<li>task description...</li>
-						</ul>
+						<form>
+							<input type="submit" value="View" style="height:50px">
+						</form>
+					</td>			
+				</tr>
+				<tr class="forstRow" valign="top">
+					<td>
+					<%@ include file="Payment.jsp" %>
 					</td>
 					<td>
-						<ul>
-							<a href="EditTask.html">View</a>
-							<a href="EditTask.html">View</a>
-							<a href="EditTask.html">View</a>
-						</ul>
+						<form>
+							<input type="submit" value="View" style="height:50px">
+						</form>
+					</td>			
+				</tr>
+				<tr class="forstRow" valign="top">
+					<td>
+					<%@ include file="Payment.jsp" %>
 					</td>
 					<td>
-						<ul>
-							<a href="EditTask.html">Edit</a>
-							<a href="EditTask.html">Edit</a>
-							<a href="EditTask.html">Edit</a>
-						</ul>
+						<form>
+							<input type="submit" value="View" style="height:50px">
+						</form>
+					</td>			
+				</tr>
+				<tr class="forstRow" valign="top">
+					<td>
+					<%@ include file="Payment.jsp" %>
 					</td>
+					<td>
+						<form>
+							<input type="submit" value="View" style="height:50px">
+						</form>
+					</td>			
+				</tr>
+				<tr class="forstRow" valign="top">
+					<td>
+					<%@ include file="Payment.jsp" %>
+					</td>
+					<td>
+						<form>
+							<input type="submit" value="View" style="height:50px">
+						</form>
+					</td>			
+				</tr><tr class="forstRow" valign="top">
+					<td>
+					<%@ include file="Payment.jsp" %>
+					</td>
+					<td>
+						<form>
+							<input type="submit" value="View" style="height:50px">
+						</form>
+					</td>			
+				</tr><tr class="forstRow" valign="top">
+					<td>
+					<%@ include file="Payment.jsp" %>
+					</td>
+					<td>
+						<form>
+							<input type="submit" value="View" style="height:50px">
+						</form>
+					</td>			
+				</tr><tr class="forstRow" valign="top">
+					<td>
+					<%@ include file="Payment.jsp" %>
+					</td>
+					<td>
+						<form>
+							<input type="submit" value="View" style="height:50px">
+						</form>
+					</td>			
+				</tr><tr class="forstRow" valign="top">
+					<td>
+					<%@ include file="Payment.jsp" %>
+					</td>
+					<td>
+						<form>
+							<input type="submit" value="View" style="height:50px">
+						</form>
+					</td>			
+				</tr><tr class="forstRow" valign="top">
+					<td>
+					<%@ include file="Payment.jsp" %>
+					</td>
+					<td>
+						<form>
+							<input type="submit" value="View" style="height:50px">
+						</form>
+					</td>			
+				</tr><tr class="forstRow" valign="top">
+					<td>
+					<%@ include file="Payment.jsp" %>
+					</td>
+					<td>
+						<form>
+							<input type="submit" value="View" style="height:50px">
+						</form>
+					</td>			
+				</tr><tr class="forstRow" valign="top">
+					<td>
+					<%@ include file="Payment.jsp" %>
+					</td>
+					<td>
+						<form>
+							<input type="submit" value="View" style="height:50px">
+						</form>
+					</td>			
+				</tr><tr class="forstRow" valign="top">
+					<td>
+					<%@ include file="Payment.jsp" %>
+					</td>
+					<td>
+						<form>
+							<input type="submit" value="View" style="height:50px">
+						</form>
+					</td>			
+				</tr><tr class="forstRow" valign="top">
+					<td>
+					<%@ include file="Payment.jsp" %>
+					</td>
+					<td>
+						<form>
+							<input type="submit" value="View" style="height:50px">
+						</form>
+					</td>			
+				</tr><tr class="forstRow" valign="top">
+					<td>
+					<%@ include file="Payment.jsp" %>
+					</td>
+					<td>
+						<form>
+							<input type="submit" value="View" style="height:50px">
+						</form>
+					</td>			
+				</tr><tr class="forstRow" valign="top">
+					<td>
+					<%@ include file="Payment.jsp" %>
+					</td>
+					<td>
+						<form>
+							<input type="submit" value="View" style="height:50px">
+						</form>
+					</td>			
+				</tr><tr class="forstRow" valign="top">
+					<td>
+					<%@ include file="Payment.jsp" %>
+					</td>
+					<td>
+						<form>
+							<input type="submit" value="View" style="height:50px">
+						</form>
+					</td>			
+				</tr><tr class="forstRow" valign="top">
+					<td>
+					<%@ include file="Payment.jsp" %>
+					</td>
+					<td>
+						<form>
+							<input type="submit" value="View" style="height:50px">
+						</form>
+					</td>			
+				</tr><tr class="forstRow" valign="top">
+					<td>
+					<%@ include file="Payment.jsp" %>
+					</td>
+					<td>
+						<form>
+							<input type="submit" value="View" style="height:50px">
+						</form>
+					</td>			
+				</tr><tr class="forstRow" valign="top">
+					<td>
+					<%@ include file="Payment.jsp" %>
+					</td>
+					<td>
+						<form>
+							<input type="submit" value="View" style="height:50px">
+						</form>
+					</td>			
+				</tr><tr class="forstRow" valign="top">
+					<td>
+					<%@ include file="Payment.jsp" %>
+					</td>
+					<td>
+						<form>
+							<input type="submit" value="View" style="height:50px">
+						</form>
+					</td>			
 				</tr>
 				<tr valign="bottom">
 					<td>
