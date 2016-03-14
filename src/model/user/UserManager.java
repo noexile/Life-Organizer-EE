@@ -1,6 +1,7 @@
 package model.user;
 
 import java.sql.Date;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.time.LocalDate;
@@ -27,6 +28,7 @@ public class UserManager {
 	public UserManager(User user) {
 		this.user = user;
 		this.dbmanager = DBManager.getInstance();
+		this.generateAllPaymentEventFromDBForUser(this.user);
 	}
 	
 	/*-------------PAYMENT EVENT-------------*/
@@ -54,6 +56,71 @@ public class UserManager {
 		}
 	}
 	
+	private synchronized PaymentEvent getTheLastAddedPaymentEventInDB(){
+		Statement st=null;
+		ResultSet rs = null;
+		PaymentEvent lastAdded = null;
+		String select = "SELECT max(pe_id) FROM "+DBManager.getDbName()+"."+DBManager.ColumnNames.PAYMENT_EVENTS.toString()+" GROUP BY user_id HAVING user_id = "+this.user.getUniqueDBId()+";";
+		try{
+			st = this.dbmanager.getConnection().createStatement();
+			rs = st.executeQuery(select);
+			while(rs.next()){
+				Integer peID = rs.getInt(1);
+				lastAdded = this.getPaymentEventByID(peID);
+			}
+		}catch(SQLException e){
+			System.out.println("Problem with get added last payment");
+			e.printStackTrace();
+		}
+		finally{
+			try {
+				st.close();
+				rs.close();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		return lastAdded;
+	}
+	
+	private PaymentEvent getPaymentEventByID(int uniqueID){
+		Statement st = null;
+		ResultSet rs= null;
+		PaymentEvent newPayment = null;
+		String statement = "SELECT pe_id,pe_name,description,amount,is_paid,is_income,for_date FROM "+DBManager.getDbName()+"."+DBManager.ColumnNames.PAYMENT_EVENTS.toString()+" WHERE pe_id = "+uniqueID;
+		try{
+			st = this.dbmanager.getConnection().createStatement();
+			rs = st.executeQuery(statement);
+			while(rs.next()){
+				Integer uniID = rs.getInt(1);
+				String name = rs.getString(2);
+				String description = rs.getString(3);
+				double amount = rs.getDouble(4);
+				boolean isPaid = rs.getBoolean(5);
+				boolean isIncome = rs.getBoolean(6);
+				LocalDate dateTime = rs.getDate(7).toLocalDate();
+				newPayment = new PaymentEvent(name, description, amount, isIncome, isPaid, dateTime,uniID);
+			}
+		}catch(SQLException e){
+			System.out.println("PROBLEM WITH get payment event by id"+e.getMessage());
+			e.printStackTrace();
+		} catch (IllegalAmountException e) {
+			System.out.println("Error in method get payment event by id");
+			e.printStackTrace();
+		}
+		finally{
+			try {
+				st.close();
+				rs.close();
+			} catch (SQLException e) {
+				System.out.println("Error with close connection"+e.getMessage());
+				e.printStackTrace();
+			}
+		}
+		return newPayment;
+	}
+	
 	public void removePaymentEvent(PaymentEvent event) {
 		this.user.removePaymentEvent(event);
 	}
@@ -68,7 +135,7 @@ public class UserManager {
 	
 	public void createPaymentEvent(String eventTitle, String description, double amount, boolean isIncome, boolean isPaid, LocalDate forDate) throws IllegalAmountException, SQLException{
 		this.addPaymentEventINDataBase(new PaymentEvent(eventTitle, description, amount, isIncome, isPaid, forDate));
-		this.user.createPaymentEvent(eventTitle, description, amount, isIncome, isPaid, forDate);
+		this.user.createPaymentEvent(this.getTheLastAddedPaymentEventInDB());
 	}
 	
 	public void modifyPaymentEvent(PaymentEvent event, String eventTitle, String description, double amount, boolean isIncome, boolean isPaid, LocalDate forDate) throws IllegalAmountException{
@@ -79,7 +146,38 @@ public class UserManager {
 		this.user.pay(event);
 	}
 	
-	
+	private void generateAllPaymentEventFromDBForUser(User user){
+		String select ="SELECT pe_id,pe_name,description,amount,is_paid,is_income,for_date FROM "+DBManager.getDbName()+"."+DBManager.ColumnNames.PAYMENT_EVENTS.toString()+" WHERE (user_id = "+this.user.getUniqueDBId()+")";
+		ResultSet rs = null;
+		try(Statement statement = this.dbmanager.getConnection().createStatement()){
+			rs = statement.executeQuery(select);
+			if(!rs.wasNull()){
+				while(rs.next()){
+					Integer uniID = rs.getInt(1);
+					String name = rs.getString(2);
+					String description = rs.getString(3);
+					double amount = rs.getDouble(4);
+					boolean isPaid = rs.getBoolean(5);
+					boolean isIncome = rs.getBoolean(6);
+					LocalDate dateTime = rs.getDate(7).toLocalDate();
+					this.addPaymentEvent(new PaymentEvent(name, description, amount, isIncome, isPaid, dateTime,uniID));
+				}
+			}
+		} catch (IllegalAmountException e) {
+			System.out.println(e.getMessage());
+		} catch (SQLException e1) {
+			System.out.println("Problem with select of payment events " + e1.getMessage());
+		}finally{
+			try {
+				rs.close();
+			} catch (SQLException e) {
+				System.out.println("Error with close conection");
+				e.printStackTrace();
+			}
+		}
+		
+		
+	}
 	
 	/*--------------SHOPPING LIST EVENT---------------*/
 	

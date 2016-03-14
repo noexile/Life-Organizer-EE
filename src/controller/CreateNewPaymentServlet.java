@@ -78,6 +78,10 @@ public class CreateNewPaymentServlet extends HttpServlet {
 			e.printStackTrace();
 		}
 		
+		for(DatedEvent e : manager.getEvents()){
+			System.out.println(((PaymentEvent)e).getUniqueIDForPayment());
+		}
+		
 		response.sendRedirect("main.jsp");
 		
 		

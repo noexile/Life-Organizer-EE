@@ -74,24 +74,28 @@ public class User {
 		this.events.remove(event);
 	}
 	
-	protected void createPaymentEvent(String eventTitle, String description, double amount, boolean isIncome, boolean isPaid, LocalDate forDate) throws IllegalAmountException{
+	protected void createPaymentEvent(PaymentEvent Event) throws IllegalAmountException{
 		/*
 		 * amount is checked in the OOP in the PaymentEvent class 
 		 * isIncome will be button (radio?) and will be a must to continue - no need for check
 		 * in the OOP isPayed will be button (radio?) and will be a must to continue - no need for check in the OOP forDate will be chooser from
 		 * the calendar and and will be a must to continue - no need for check in the OOP
 		 */
-		if (eventTitle == null || eventTitle.trim().isEmpty()) {
+		if (Event.getTitle() == null || Event.getTitle().trim().isEmpty()) {
 			try {
 				throw new IncorrectInputException("The input name must not be empty!");
 			} catch (IncorrectInputException e) {}
-		} else if (description == null || description.trim().isEmpty()) {
+		} else if (Event.getDescription() == null || Event.getDescription().trim().isEmpty()) {
+			try {
+				throw new IncorrectInputException("The input description must not be empty!");
+			} catch (IncorrectInputException e) {}
+		}else if(Event.getUniqueIDForPayment() == null){
 			try {
 				throw new IncorrectInputException("The input description must not be empty!");
 			} catch (IncorrectInputException e) {}
 		}
 
-		this.events.add(new PaymentEvent(eventTitle, description, amount, isIncome, isPaid, forDate));
+		this.events.add(Event);
 	}
 	
 	protected void modifyPaymentEvent(PaymentEvent event, String eventTitle, String description, double amount, boolean isIncome, boolean isPaid, LocalDate forDate) throws IllegalAmountException {

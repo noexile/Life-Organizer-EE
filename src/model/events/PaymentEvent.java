@@ -6,6 +6,7 @@ import java.time.LocalDate;
 
 public class PaymentEvent extends DatedEvent {
 
+	private Integer uniqueIDPayment;
 	private double amount;
 	private boolean isIncome;
 	private boolean isPaid;
@@ -19,7 +20,15 @@ public class PaymentEvent extends DatedEvent {
         
         this.setAmount(amount);
     }
-
+	
+	public PaymentEvent(String eventTitle,String description, double amount, boolean isIncome, boolean isPaid, LocalDate dateTime,int uniqueIDPayment) throws IllegalAmountException {
+        super(eventTitle, description, dateTime);
+        this.isIncome = isIncome;
+        this.isOverdue = checkIfOverdue();
+        this.isPaid = isPaid;
+        this.uniqueIDPayment = uniqueIDPayment;
+        this.setAmount(amount);
+    }
 
 	// methods
     private boolean checkIfOverdue() {
@@ -72,5 +81,7 @@ public class PaymentEvent extends DatedEvent {
 		super.setDate(dateTime);
 	}
     
-
+	public Integer getUniqueIDForPayment(){
+		return this.uniqueIDPayment;
+	}
 }
