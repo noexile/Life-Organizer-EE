@@ -14,6 +14,7 @@ pe_name VARCHAR(25) NOT NULL,
 description VARCHAR(255), 
 amount DOUBLE PRECISION UNSIGNED,
 is_paid BOOLEAN NOT NULL,
+is_income BOOLEAN NOT NULL,
 for_date DATE NOT NULL,
 FOREIGN KEY (user_id) REFERENCES lo.users(user_id)
 );

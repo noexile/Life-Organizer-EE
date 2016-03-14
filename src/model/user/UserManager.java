@@ -35,17 +35,23 @@ public class UserManager {
 	}
 	
 	public void addPaymentEventINDataBase(PaymentEvent event) throws SQLException{
-		
-		String statement = "INSERT INTO " + DBManager.getDbName() + ".payment_events (user_id,pe_name,description,amount,is_paid,for_date) VALUES (?,?,?,?,?,?);";
-		PreparedStatement st = (PreparedStatement) this.dbmanager.getConnection().prepareStatement(statement);
-		st.setInt(1, this.user.getUniqueDBId());
-		st.setString(2, event.getTitle());
-		st.setString(3, event.getDescription());
-		st.setDouble(4, event.getAmount());
-		st.setBoolean(5, event.getIsPaid());
-		st.setDate(6, Date.valueOf(event.getDateTime()));
-		int n = st.executeUpdate();	
-		
+		PreparedStatement st = null;
+		try{
+			String statement = "INSERT INTO " + DBManager.getDbName() + ".payment_events (user_id,pe_name,description,amount,is_paid,is_income,for_date) VALUES (?,?,?,?,?,?,?);";
+			st = (PreparedStatement) this.dbmanager.getConnection().prepareStatement(statement);
+			st.setInt(1, this.user.getUniqueDBId());
+			st.setString(2, event.getTitle());
+			st.setString(3, event.getDescription());
+			st.setDouble(4, event.getAmount());
+			st.setBoolean(5, event.getIsPaid());
+			st.setBoolean(6, event.getIsIncome());
+			st.setDate(7, Date.valueOf(event.getDateTime()));
+			st.executeUpdate();		
+		}catch(SQLException e){
+			throw e;
+		}finally{
+			st.close();
+		}
 	}
 	
 	public void removePaymentEvent(PaymentEvent event) {
@@ -72,6 +78,8 @@ public class UserManager {
 	public void pay(PaymentEvent event){
 		this.user.pay(event);
 	}
+	
+	
 	
 	/*--------------SHOPPING LIST EVENT---------------*/
 	
