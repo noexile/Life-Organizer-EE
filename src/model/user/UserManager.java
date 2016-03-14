@@ -8,6 +8,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import com.mysql.jdbc.PreparedStatement;
 
@@ -28,9 +29,11 @@ public class UserManager {
 	public UserManager(User user) {
 		this.user = user;
 		this.dbmanager = DBManager.getInstance();
-		this.generateAllPaymentEventFromDBForUser(this.user);
+		generateAllPaymentEventFromDBForUser(this.user);
+		generateAllToDoFromDBForUser(this.user);
 	}
 	
+
 	/*-------------PAYMENT EVENT-------------*/
 	public void addPaymentEvent(PaymentEvent event) {
        this.user.addPaymentEvent(event);
@@ -255,9 +258,38 @@ public class UserManager {
 		this.user.modifyTODO(todo, name, description);
 	}
 	
+	private void generateAllToDoFromDBForUser(User user2) {
+		String select ="SELECT todo_id, todo_name, todo_type, description FROM " + DBManager.getDbName() + "." + DBManager.ColumnNames.TODOS.toString().toLowerCase() + " WHERE (user_id = " + this.user.getUniqueDBId() + ");";
+		ResultSet rs = null;
+		try(Statement statement = this.dbmanager.getConnection().createStatement()){
+			rs = statement.executeQuery(select);
+			while(rs.next() && rs != null){
+				Integer id = rs.getInt(1);
+				String name = rs.getString(2);
+				String type = rs.getString(3);
+				String description = rs.getString(4);
+				this.user.addTODO(type, new TODOEvent(name, description, type, id));
+			}
+		} catch (SQLException e) {
+			System.out.println("Problem with select of payment events " + e.getMessage());
+		}finally{
+			try {
+				rs.close();
+			} catch (SQLException e1) {
+				System.out.println("Error with close conection: " + e1.getMessage());
+			}
+		}
+	}
+	
 	/*--------------DebitAccounts ---------------*/
 	
-	 public ArrayList<DebitAccount> getDebitAccounts(){
+	 private void addToDo(TODOEvent todoEvent) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+	public ArrayList<DebitAccount> getDebitAccounts(){
 	        return (ArrayList<DebitAccount>) Collections.unmodifiableList(this.user.getDebitAccounts());
 	 }
 
