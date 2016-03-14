@@ -16,7 +16,7 @@
 		<td><a href="MyCallendar.jsp"><font color="black"><p>My Callendar</p></font></a></td>
 		</tr>
 		<tr>
-		<td><a href="Payment.jsp"><font color="black"><p>My Payments</p></font></a></td>
+		<td><a href="MyPayments.jsp"><font color="black"><p>My Payments</p></font></a></td>
 		</tr>
 		<tr>
 		<td><a href="MyAccounts.jsp"><font color="black"><p>My Accounts<br/></br></br>List</p></font></a></td>
