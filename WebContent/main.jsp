@@ -1,3 +1,4 @@
+<%@page import="java.time.LocalDate"%>
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
 	pageEncoding="ISO-8859-1"%>
 <%@ page import="model.user.User"%>
@@ -25,13 +26,15 @@
 				document.getElementById("demo").innerHTML = d.toDateString();
 			</script>
 			<br /> <br /> <br /> <br />
-			<form action="" method="add">
-				<input type="button" value="Show tasks for today"
-					style="height: 50px; width: 500px"> </br> </br> <a
+			<form action="ShowInsidePaymentEventServlet" method="post">
+				<input type="hidden" name="dateForShow" value="${LocalDate.now()}">
+				<input type="hidden" name="status" value="all"> 
+				<input type="submit" value="Show tasks for today"
+					style="height: 50px; width: 500px"> 
+			</form>
+			</br> </br> <a
 					href="AddPayment.jsp"><input type="button" value="ADD NEW PAYMENT"
 					style="height: 50px; width: 500px"></a>
-
-			</form>
 		</div>
 		<%@ include file="MenuMap.jsp"%>
 	</table>

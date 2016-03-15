@@ -13,16 +13,18 @@
 	</header>
 <body>
 	<center><font size="7">View Payment</font></center>
+	<c:set var="Payment" scope="request" value="${requestScope.Payment}"/>
 		<%@ include file="Payment.jsp"%>
 	<center>
 		<form>
 			<input type="submit" value="Pay" style="height:20px; width:102px">
-			<form>	
+		</form>
+		<form action="EditPaymentServlet" method="get">
+				<input type="hidden" name="currPayment" value="${requestScope.Payment.getUniqueIDForPayment()}">	
 				<input type="submit" value="Edit" style="height:20px; width:102px">
-				<form>	
+		</form>	
+		<form>
 				<input type="submit" value="Delete" style="height:20px; width:102px">
-				</form>
-			</form>
 		</form>
 	</center>
 	<%@ include file="MenuMap.jsp"%>
