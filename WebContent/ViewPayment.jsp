@@ -16,16 +16,30 @@
 	<c:set var="Payment" scope="request" value="${requestScope.Payment}"/>
 		<%@ include file="Payment.jsp"%>
 	<center>
-		<form>
-			<input type="submit" value="Pay" style="height:20px; width:102px">
-		</form>
-		<form action="EditPaymentServlet" method="get">
-				<input type="hidden" name="currPayment" value="${requestScope.Payment.getUniqueIDForPayment()}">	
-				<input type="submit" value="Edit" style="height:20px; width:102px">
-		</form>	
-		<form>
-				<input type="submit" value="Delete" style="height:20px; width:102px">
-		</form>
+	<table>	
+		<tr>
+			<c:if test="${requestScope.Payment.isPaid == false}">
+			<td>
+				<form action="PayPaymentEventServlet" method="post">
+					<input type="hidden" name="currPayment" value="${requestScope.Payment.getUniqueIDForPayment()}">
+					<input type="submit" value="Pay" style="height:20px; width:102px">
+				</form>
+			</td>
+			<td>
+				<form action="EditPaymentServlet" method="get">
+					<input type="hidden" name="currPayment" value="${requestScope.Payment.getUniqueIDForPayment()}">	
+					<input type="submit" value="Edit" style="height:20px; width:102px">
+				</form>	
+			</td>
+			</c:if>
+			<td>
+				<form action="DeletePaymentEventServlet" method="post">
+					<input type="hidden" name="currPayment" value="${requestScope.Payment.getUniqueIDForPayment()}">	
+					<input type="submit" value="Delete" style="height:20px; width:102px">
+				</form>	
+			</td>
+		</tr>
+	</table>
 	</center>
 	<%@ include file="MenuMap.jsp"%>
 </body>

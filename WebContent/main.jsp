@@ -16,7 +16,8 @@
 <body>
 	<header> <a href="main.jsp"><p>
 			<img src="resources/MainLogo.jpg" alt="logo" /></a>
-	<big>Hello <%=(manager == null ? "" : manager.getUserName())%></big>
+	<big>Hello <%=(manager == null ? "" : manager.getUserName())%></big><br>
+	<center><font size="6">Your Balance: <%=(manager == null ? "" : manager.getMoney())%></font></center>
 	</p>
 	<table border="2" bordercolor="cyan" cellpadding="10">
 		<div class="test">

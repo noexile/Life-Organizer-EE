@@ -23,7 +23,7 @@
 				<form action="SignUpServlet" method="post">
 					<tr>
 						<td>
-							<a>Username:</br><input type="text" name="username" style="height:20px; width:247px"></a>
+							<a>Username:</br><input type="text" name="username" value="${requestScope.name}" style="height:20px; width:247px"></a>
 						</td>
 					</tr>
 					<tr>
@@ -38,13 +38,17 @@
 					</tr>
 					<tr>
 						<td>
-							<a>e-mail:</br><input type="text" name="email" style="height:20px; width:247px"></a>
+							<a>e-mail:</br><input type="text" name="email" value="${requestScope.ema}" style="height:20px; width:247px"></a>
 						</td>
 					</tr>
 					<tr>
 						<td>
 							<input type="submit" value="Register" name="Register">
+							<a href="HomePage.jsp"><input type="button" value="Back" style="height:20px; width:74px"></a>
 						</td>
+						
+							
+			
 					</tr>
 				</form>
 			</table>

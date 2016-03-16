@@ -24,8 +24,18 @@
 				<td><font size="2"><c:out value="${requestScope.Payment.title}"/></font></b></td>
 				<td><font size="2"><c:out value="${requestScope.Payment.description}"/></font></b></td>
 				<td><font size="2"><c:out value="${requestScope.Payment.amount}"/></font></b></td>
-				<td><font size="2"><c:out value="${requestScope.Payment.isPaid}"/></font></b></td>
-				<td><font size="2"><c:out value="${requestScope.Payment.isIncome}"/></font></b></td>
+				<td><font size="2">
+									<c:choose>
+										<c:when test="${requestScope.Payment.isPaid == true}">Paid</c:when>
+										<c:otherwise>To Pay</c:otherwise>
+									</c:choose>
+					</font></b></td>
+				<td><font size="2">
+									<c:choose>
+										<c:when test="${requestScope.Payment.isIncome == true}"><font color="#00FF00">Earning</font></c:when>
+										<c:otherwise><font color="red">Expense</font></c:otherwise>
+									</c:choose>
+					</font></b></td>
 				<td><font size="2"><c:out value="${requestScope.Payment.dateTime}"/></font></b></td>
 			</tr>
 	</table>

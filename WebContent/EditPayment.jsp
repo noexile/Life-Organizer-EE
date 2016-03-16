@@ -14,7 +14,7 @@
 		<section class="container">
 		<center><b>Edit Payment</b></center>
 								<c:set var="ErrorMessage" scope="session" value="${sessionScope.ErrorMessage}"/>
-								<c:if test="${ErrorMessage != null && ErrorMessage != ' '}">
+								<c:if test="${(ErrorMessage != null) && (ErrorMessage != ' ')}">
    								<center><b><font color="red"><c:out value="${ErrorMessage}"/></font></b></center>
 								</c:if>
 		<form action="EditPaymentServlet" method="post">

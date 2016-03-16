@@ -45,6 +45,7 @@
 				<font size="6" color="red">You do not have Payments for this date</font>
 				</c:if>
 			</table>
+				<center><a href="AddPayment.jsp"><button>Add Task</button></a></center>
 			</section>
 			<nav>
 				<%@ include file="MenuMap.jsp" %>	

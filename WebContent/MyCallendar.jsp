@@ -8,10 +8,11 @@
 	<link rel="stylesheet" href="css/MainStyle.css">
 </head>
 <body>
-	<header>
+		<header>
 			<br/><br/><a href="main.jsp"><img src = "resources/MainLogo.jpg" alt="logo" /></a><p id="cal">My Calendar</p>
 			<nav>
-				<%@ include file="MenuMap.jsp" %>	
+				<right><%@ include file="test.jsp" %></right>
+				<%@ include file="MenuMap.jsp" %>
 			</nav>
 		</header>
 		<aside>
