@@ -16,8 +16,8 @@
 						<p id="board">Debit<p id="r_board">Credit</p></p>
 						<p style="font-size:24px" style="text-align:left">Account name:</p>
 						<p style="font-size:24px" style="text-align:left">Amount:</p>
-						<p style="font-size:24px" style="text-align:left"><a href="AccountHistory.html">Account History</a></p>
-						<p style="float:right" style="text-align:left" style="padding:30px 350px"><a href="NewAccount.html"><input type="button" value="Create a new account" style="height:25px; width:200px"></a>
+						<p style="font-size:24px" style="text-align:left"><a href="AccountHistory.jsp">Account History</a></p>
+						<p style="float:right" style="text-align:left" style="padding:30px 350px"><a href="NewAccount.jsp"><input type="button" value="Create a new account" style="height:25px; width:200px"></a>
 					</article><br/><br/><br/>
 			<nav>
 				<%@ include file="MenuMap.jsp" %>
