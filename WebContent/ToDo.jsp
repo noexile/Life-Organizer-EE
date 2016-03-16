@@ -1,5 +1,6 @@
-<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
-	pageEncoding="ISO-8859-1"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8"%>
+<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
@@ -16,96 +17,14 @@
 	<br />
 
 	<section class="right_side">
-	<table class="tasksSize" frame="box" bordercolor="cyan"
-		class="tableSignUp" align="right">
+	<table class="tasksSize" frame="box" bordercolor="cyan" class="tableSignUp" align="right">
+			<c:forEach var="item" items="${sessionScope.todos}">
 			<tr>
-				<td><%@ include file="ToDoRow.jsp"%></td>
-				<td>
-					<form>
-						<input type="submit" value="View" style="height: 50px">
-					</form>
-				</td>
+				<c:set var="todo" value="${item}" scope="request"/>
+				<td><%@ include file="ToDoRow.jsp" %></td>
 			</tr>
-			<tr>
-				<td><%@ include file="ToDoRow.jsp"%></td>
-				<td>
-					<form>
-						<input type="submit" value="View" style="height: 50px">
-					</form>
-				</td>
-			</tr>
-			<tr>
-				<td><%@ include file="ToDoRow.jsp"%></td>
-				<td>
-					<form>
-						<input type="submit" value="View" style="height: 50px">
-					</form>
-				</td>
-			</tr>
-			<tr>
-				<td><%@ include file="ToDoRow.jsp"%></td>
-				<td>
-					<form>
-						<input type="submit" value="View" style="height: 50px">
-					</form>
-				</td>
-			</tr>
-			<tr>
-				<td><%@ include file="ToDoRow.jsp"%></td>
-				<td>
-					<form>
-						<input type="submit" value="View" style="height: 50px">
-					</form>
-				</td>
-			</tr>
-			<tr>
-				<td><%@ include file="ToDoRow.jsp"%></td>
-				<td>
-					<form>
-						<input type="submit" value="View" style="height: 50px">
-					</form>
-				</td>
-			</tr>
-			<tr>
-				<td><%@ include file="ToDoRow.jsp"%></td>
-				<td>
-					<form>
-						<input type="submit" value="View" style="height: 50px">
-					</form>
-				</td>
-			</tr>
-			<tr>
-				<td><%@ include file="ToDoRow.jsp"%></td>
-				<td>
-					<form>
-						<input type="submit" value="View" style="height: 50px">
-					</form>
-				</td>
-			</tr>
-			<tr>
-				<td><%@ include file="ToDoRow.jsp"%></td>
-				<td>
-					<form>
-						<input type="submit" value="View" style="height: 50px">
-					</form>
-				</td>
-			</tr>
-			<tr>
-				<td><%@ include file="ToDoRow.jsp"%></td>
-				<td>
-					<form>
-						<input type="submit" value="View" style="height: 50px">
-					</form>
-				</td>
-			</tr>
-			<tr>
-				<td><%@ include file="ToDoRow.jsp"%></td>
-				<td>
-					<form>
-						<input type="submit" value="View" style="height: 50px">
-					</form>
-				</td>
-			</tr>
+		</td>
+	</c:forEach>
 	</table>
 	<a href="AddToDo.jsp"><button>Add ToDo</button></a> </section> <nav> <%@ include
 		file="MenuMap.jsp"%> </nav> </header>

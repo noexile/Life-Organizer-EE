@@ -30,6 +30,7 @@ public class LoginServlet extends HttpServlet {
 			response.sendRedirect("ErrorHomePage.jsp");
 		} else {
 			request.getSession().setAttribute("loggedUserManager", new UserManager(loggedUser));
+			request.getSession().setAttribute("todos", loggedUser.getTodos());
 			response.sendRedirect("main.jsp");
 		}
 		

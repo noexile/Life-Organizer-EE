@@ -1,5 +1,5 @@
-<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
-    pageEncoding="ISO-8859-1"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <head>
   <meta charset="utf-8">
@@ -9,7 +9,11 @@
 </head>
 <body background="resources/Logo.jpg">
 	<section class="container">
-		<div class="login">
+		<div class="login">  
+		<% if(request.getAttribute("user") == "error") { %> 
+			<h4><font color="red">Wrong username or password.</font></h4>			
+			<%
+		}%>
 			<h1>Welcome to Life Organizer</h1>
 			<form method="post" action="LoginServlet">
 				<p><input type="text" name="user" value="" placeholder="Username or Email"></p>
@@ -18,7 +22,7 @@
 				<label><input type="checkbox" name="remember_me" id="remember_me">	Remember me on this computer</label>
 				</p>
 				<p class="submit"><input type="submit" value="Login"></p>
-				<p><a href="SignUp.jsp">New to Life Organizer ? Click here to Register</a></p>
+				<p><a href="SignUp.html">New to Life Organizer ? Click here to Register</a></p>
 			</form>
 		</div>
 	</section>

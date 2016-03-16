@@ -25,7 +25,7 @@ public class User {
 	private String email;
 
 	private ArrayList<PaymentEvent> events;
-	private HashMap<String, ArrayList<TODOEvent>> todos;//type -> events
+	private ArrayList<TODOEvent> todos;//type -> events
 	private ArrayList<ShoppingList> shoppingList;
 	private ArrayList<DebitAccount> debitAccounts;
 	private ArrayList<NotificationEvent> notifications;
@@ -39,13 +39,13 @@ public class User {
         this.money = new BigDecimal(0.1);
         generateCollectionsForUser();
 	}
+
 	
 	public User(String userName, String password, String email) {
 		this.setUserName(userName);
 		this.setPassword(password);
 		this.email = email;
 		this.money = new BigDecimal(0.1);
-		 
 		generateCollectionsForUser();
 	}
 
@@ -53,7 +53,7 @@ public class User {
 	
 	private void generateCollectionsForUser() {
 		this.debitAccounts = new ArrayList<>();
-		this.todos = new HashMap<>();
+		this.todos = new ArrayList<>();
 		this.shoppingList = new ArrayList<>();
 		this.events = new ArrayList<PaymentEvent>();
 		this.notifications = new ArrayList<>();
@@ -262,20 +262,12 @@ public class User {
 	
 	/*--------------TODO LIST EVENT---------------*/
 	
-	protected void addTODO(String type, TODOEvent event){
-		if (!this.todos.containsKey(type)){
-            this.todos.put(type, new ArrayList<TODOEvent>());
-        }
-
-        this.todos.get(type).add(event);
+	protected void addTODO(TODOEvent event){
+        this.todos.add(event);
 	}
 
-    protected ArrayList<TODOEvent> getTodos(String type){
-        if (!this.todos.containsKey(type)){
-            this.todos.put(type, new ArrayList<TODOEvent>());
-        }
-
-        return this.todos.get(type);
+    public ArrayList<TODOEvent> getTodos(){
+        return this.todos;
     }
     
     protected void removeTODOEvent(TODOEvent event){
@@ -285,10 +277,10 @@ public class User {
 			} catch (NotExistException e) {}
 		}
     	
-    	String type = event.getType();
-    	for(TODOEvent currEvent : this.getTodos(type)){
-    		if(currEvent.getTitle().equals(event.getTitle())){
-    			this.getTodos(type).remove(currEvent);
+    	int id = event.getUniqueID();
+    	for(TODOEvent currEvent : this.getTodos()){
+    		if(currEvent.getUniqueID() == id){
+    			this.getTodos().remove(event);
     		}
     	}
     }
@@ -308,7 +300,7 @@ public class User {
 			} catch (IncorrectInputException e) {}
 		}
 
-		this.addTODO(type,new TODOEvent(name, description, type));
+		this.addTODO(new TODOEvent(name, description, type));
 	}
     
     protected void modifyTODO(TODOEvent todo, String name, String description) {
@@ -444,10 +436,9 @@ public class User {
 	public String getEmail() {
 		return this.email;
 	}
-
+	
 	protected BigDecimal getMoney() {
 		return money;
 	}
-	
-	
+
 }

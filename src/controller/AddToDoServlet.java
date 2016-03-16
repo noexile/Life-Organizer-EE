@@ -45,7 +45,7 @@ public class AddToDoServlet extends HttpServlet {
 		UserManager manager = (UserManager) session.getAttribute("loggedUserManager");	
 		TODOEvent todo = new TODOEvent(name, desc, term);
 		
-		manager.addTODO(term, todo);
+		manager.addTODO(todo);
 		dispatcher.forward(request, response);
 	}
 
