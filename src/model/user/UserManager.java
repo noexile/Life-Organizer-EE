@@ -10,7 +10,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Map;
 
 import com.mysql.jdbc.PreparedStatement;
 
@@ -32,17 +31,19 @@ public class UserManager {
 		this.user = user;
 		this.dbmanager = DBManager.getInstance();
 		this.generateAllPaymentEventFromDBForUser(this.user);
-		
 		generateAllToDoFromDBForUser(this.user);
 	}
 	
-
 	/*-------------PAYMENT EVENT-------------*/
+	public void addPaymentEvent(PaymentEvent event) {
+       this.user.addPaymentEvent(event);
+	}
+	
 	public ArrayList<PaymentEvent> getPaymentEventsByConcretDate(LocalDate date){
 		ArrayList<PaymentEvent> byDate = new ArrayList<>();
-			for(DatedEvent e : this.getEvents()){
-				if(e.getDateTime().equals(date)){
-					byDate.add((PaymentEvent) e);
+		for(DatedEvent e : this.getEvents()){
+			if(e.getDateTime().equals(date)){
+				byDate.add((PaymentEvent) e);
 			}
 		}
 		return byDate;
@@ -144,11 +145,11 @@ public class UserManager {
 			st.executeUpdate(statment);
 		}
 	}
-
+	
 	public List<PaymentEvent> getEvents() {
 		List<PaymentEvent> sortedList = new ArrayList<PaymentEvent>(this.user.getEvents());
 		Collections.sort(sortedList,new Comparator<PaymentEvent>() {
-	
+
 			@Override
 			public int compare(PaymentEvent o1, PaymentEvent o2) {
 				return o1.getDateTime().compareTo(o2.getDateTime());
@@ -157,21 +158,18 @@ public class UserManager {
 		return Collections.unmodifiableList((ArrayList<PaymentEvent>)(sortedList));
 	}
 	
-	public void addPaymentEvent(PaymentEvent event){
-		this.user.addEvent(event);
-	}
 	
 	public void createPaymentEvent(String eventTitle, String description, double amount, boolean isIncome, boolean isPaid, LocalDate forDate) throws IllegalAmountException, SQLException{
 		this.addPaymentEventINDataBase(new PaymentEvent(eventTitle, description, amount, isIncome, isPaid, forDate));
 		this.user.createPaymentEvent(this.getTheLastAddedPaymentEventInDB());
 	}
 	
-	public void modifyPaymentEvent(PaymentEvent event, String eventTitle, String description, double amount, boolean isIncome, boolean isPaid, LocalDate forDate) throws IllegalAmountException, SQLException {
+	public void modifyPaymentEvent(PaymentEvent event, String eventTitle, String description, double amount, boolean isIncome, boolean isPaid, LocalDate forDate) throws IllegalAmountException, SQLException{
 		this.updatePaymentEventINDB(eventTitle,description,amount,isIncome,isPaid,forDate,event.getUniqueIDForPayment());
 		this.user.modifyPaymentEvent(event, eventTitle, description, amount, isIncome, isPaid, forDate);
 	}
-	
-	public void pay(PaymentEvent event) {
+
+	public void pay(PaymentEvent event){
 		this.user.pay(event);
 		try {
 			this.updatePaymentEventINDB(event.getTitle(), event.getDescription(), event.getAmount(), event.getIsIncome(), event.getIsPaid(), event.getDateTime(), event.getUniqueIDForPayment());
@@ -179,9 +177,10 @@ public class UserManager {
 			System.out.println("Problem to update in data base =pay payment event");
 			e.printStackTrace();
 		}
+		
 	}
 	
-	private void updatePaymentEventINDB(String eventTitle, String description, double amount, boolean isIncome,	boolean isPaid, LocalDate forDate, int uniqueIDForPayment) throws SQLException{
+	private void updatePaymentEventINDB(String eventTitle, String description, double amount, boolean isIncome, boolean isPaid, LocalDate forDate, int uniqueIDForPayment) throws SQLException{
 		String update = "UPDATE "+DBManager.getDbName()+"."+DBManager.ColumnNames.PAYMENT_EVENTS.toString()+" SET pe_name = ?,description = ?, amount=?, is_paid=?, is_income=?, for_date=? WHERE pe_id = "+uniqueIDForPayment;
 		try(PreparedStatement st = (PreparedStatement) this.dbmanager.getConnection().prepareStatement(update)){
 			st.setString(1, eventTitle);
@@ -192,7 +191,7 @@ public class UserManager {
 			st.setDate(6, Date.valueOf(forDate));
 			int n = st.executeUpdate();
 			System.out.println(n);
-		} catch(SQLException exception) {
+		}catch(SQLException exception){
 			exception.printStackTrace();
 			throw exception;
 		}
@@ -337,7 +336,6 @@ public class UserManager {
 		
 	}
 
-
 	 public ArrayList<DebitAccount> getDebitAccounts(){
 	        return (ArrayList<DebitAccount>) Collections.unmodifiableList(this.user.getDebitAccounts());
 	 }
@@ -370,12 +368,13 @@ public class UserManager {
 		 return this.user.getUserName();
 	 }
 	 
+	 
+	
 	 public User getUser() {
-		 return user;
+		 return user;	 
 	 }
 	 
 	 public double getMoney(){
 		 return this.user.getMoney().doubleValue();
-	}
-	 
+	 }
 }

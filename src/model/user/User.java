@@ -39,13 +39,13 @@ public class User {
         this.money = new BigDecimal(0.1);
         generateCollectionsForUser();
 	}
-
 	
 	public User(String userName, String password, String email) {
 		this.setUserName(userName);
 		this.setPassword(password);
 		this.email = email;
 		this.money = new BigDecimal(0.1);
+		 
 		generateCollectionsForUser();
 	}
 
@@ -436,9 +436,10 @@ public class User {
 	public String getEmail() {
 		return this.email;
 	}
-	
+
 	protected BigDecimal getMoney() {
 		return money;
 	}
-
+	
+	
 }
