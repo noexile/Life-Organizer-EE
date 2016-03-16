@@ -29,8 +29,9 @@ public class LoginServlet extends HttpServlet {
 		if (loggedUser == null || loggedUser.getUserName().trim().isEmpty()) {
 			response.sendRedirect("ErrorHomePage.jsp");
 		} else {
-			request.getSession().setAttribute("loggedUserManager", new UserManager(loggedUser));
+			request.getSession().setMaxInactiveInterval(60*60);
 			request.getSession().setAttribute("todos", loggedUser.getTodos());
+			request.getSession().setAttribute("loggedUserManager", new UserManager(loggedUser));
 			response.sendRedirect("main.jsp");
 		}
 		
