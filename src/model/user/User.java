@@ -92,6 +92,9 @@ public class User {
 			} catch (IncorrectInputException e) {}
 		}
 		this.events.add(Event);
+		if(Event.getIsPaid() == true){
+			this.pay(Event);
+		}
 	}
 	
 	protected void modifyPaymentEvent(PaymentEvent event, String eventTitle, String description, double amount, boolean isIncome, boolean isPaid, LocalDate forDate) throws IllegalAmountException {
