@@ -51,5 +51,5 @@ se_id int PRIMARY KEY AUTO_INCREMENT,
 item_name VARCHAR(100) NOT NULL,
 item_value DOUBLE PRECISION,
 list_id int NOT NULL,
-FOREIGN KEY (sl_id) REFERENCES lo.shopping_lists(list_id)
+FOREIGN KEY (list_id) REFERENCES lo.shopping_lists(sl_id)
 );

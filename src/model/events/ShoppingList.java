@@ -23,7 +23,9 @@ public class ShoppingList extends PaymentEvent{
 			description.append(entry.getName()+" : "+new Double(amount).toString()+"\n");
 		}
 		super.setAmount(amount);
-		super.setDescription(description.toString());
+		if(description != null){
+			super.setDescription(description.toString());
+		}
 	}
 	
 	// methods
