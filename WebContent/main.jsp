@@ -1,6 +1,5 @@
 <%@page import="java.time.LocalDate"%>
-<%@ page language="java" contentType="text/html; charset=UTF-8"
-	pageEncoding="UTF-8"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ page import="model.user.User"%>
 <%@ page import="model.user.UserManager"%>
 <%
@@ -14,11 +13,12 @@
 <link rel="stylesheet" href="css/MainStyle.css">
 </head>
 <body>
-	<header> <a href="main.jsp"><p>
+	<header>
+	 <a href="main.jsp"><p>
 			<img src="resources/MainLogo.jpg" alt="logo" /></a>
 	<big>Hello <%=(manager == null ? "" : manager.getUserName())%></big><br>
 	<center><font size="6">Your Balance: <%=(manager == null ? "" : manager.getMoney())%></font></center>
-	</p>
+		</p>
 	<table border="2" bordercolor="cyan" cellpadding="10">
 		<div class="test">
 			<p id="demo"></p>
