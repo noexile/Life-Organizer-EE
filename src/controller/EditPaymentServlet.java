@@ -12,19 +12,35 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import model.events.DatedEvent;
 import model.events.PaymentEvent;
 import model.exceptions.IllegalAmountException;
 import model.exceptions.IncorrectInputException;
 import model.user.UserManager;
 
-@WebServlet("/CreateNewPaymentServlet")
-public class CreateNewPaymentServlet extends HttpServlet {
+@WebServlet("/EditPaymentServlet")
+public class EditPaymentServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
+       
+ 
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		System.out.println(request.getParameter("currPayment"));
+		int id = Integer.parseInt(request.getParameter("currPayment"));
+		PaymentEvent e = null;
+		for(PaymentEvent event : ((UserManager)request.getSession().getAttribute("loggedUserManager")).getEvents()){
+			if(event.getUniqueIDForPayment() == id){
+				e = event;
+				break;
+			}
+		}
+		request.setAttribute("Payment",e);
+		request.getRequestDispatcher("EditPayment.jsp").forward(request, response);
+		return;
+	}
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		HttpSession session = request.getSession();
-		RequestDispatcher errorDispatcher = request.getRequestDispatcher("AddPayment.jsp");
+		UserManager manager = (UserManager) request.getSession().getAttribute("loggedUserManager");
+		RequestDispatcher errorDispatcher = request.getRequestDispatcher("EditPayment.jsp");
 		String name = request.getParameter("paymentName");
 		String statusPayment = request.getParameter("statuspayment");
 		String date = request.getParameter("date");
@@ -32,17 +48,19 @@ public class CreateNewPaymentServlet extends HttpServlet {
 		String statusPaid = request.getParameter("statuspaid");
 		String amount = request.getParameter("amount");
 		this.setSessionMessage(session, null);
-		
 		amount.replace(',', '.');
+		//find pe_id for update.
 		
+		int id = Integer.parseInt(request.getParameter("currPayment"));
+		PaymentEvent eventForUpdate = null;
+		for(PaymentEvent event : manager.getEvents()){
+			if(event.getUniqueIDForPayment() == id){
+				eventForUpdate = event;
+				break;
+			}
+		}
 		
-		request.setAttribute("nameForCreate",name);
-		request.setAttribute("description",description);
-		request.setAttribute("amount",amount);
-		request.setAttribute("isPaid",statusPaid);
-		request.setAttribute("isIncome",statusPayment);
-		request.setAttribute("date",date);
-		
+		request.setAttribute("Payment",eventForUpdate);
 		
 		if(!(this.validateUsername(name, request))){
 			this.setSessionMessage(session,"Invalid name of event !");
@@ -68,34 +86,26 @@ public class CreateNewPaymentServlet extends HttpServlet {
 			return;
 		}
 		
-		UserManager manager = (UserManager) session.getAttribute("loggedUserManager");
+		//Everything is ok
+		
+		//Invoke method
 		try {
-			try {
-				manager.createPaymentEvent(name, description, Double.parseDouble(amount), this.isIncome(statusPayment), this.isPaid(statusPaid), LocalDate.parse(date));
-			} catch (SQLException e1) {
-				e1.printStackTrace();
-			}
-			
-		} catch (NumberFormatException e) {
+			manager.modifyPaymentEvent(eventForUpdate, name, description, Double.parseDouble(amount), this.isIncome(statusPayment), this.isPaid(statusPaid), LocalDate.parse(date));
+			request.getRequestDispatcher("ViewPayment.jsp").forward(request, response);
+			this.setSessionMessage(session, " ");
+			return;
+		} catch (NumberFormatException | IllegalAmountException | IncorrectInputException e1) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IllegalAmountException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IncorrectInputException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			e1.printStackTrace();
+		} catch (SQLException e1) {
+			System.out.println("Problem with update in DB in SQL query");
+			e1.printStackTrace();
 		}
-		
-		for(DatedEvent e : manager.getEvents()){
-			System.out.println(((PaymentEvent)e).getUniqueIDForPayment());
-		}
-		this.setSessionMessage(session, " ");
-		response.sendRedirect("main.jsp");
-		
 		
 	}
 	
+	
+
 	private boolean isIncome(String statusPayment) throws IncorrectInputException{
 		switch (statusPayment){
 		case "expense":
@@ -145,4 +155,5 @@ public class CreateNewPaymentServlet extends HttpServlet {
 			}
 			return true;
 		}
+	
 }

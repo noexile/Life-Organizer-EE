@@ -28,7 +28,10 @@ public class SignUpServlet extends HttpServlet {
 		DBUserDAO dao = new DBUserDAO();
 		
 		RequestDispatcher errorDispatcher = request.getRequestDispatcher("SignUp.jsp");
-
+		
+		request.setAttribute("name", username);
+		request.setAttribute("ema", email);
+		
 		System.out.println(username);
 		
 		// checks if user name is not empty field || null and checks if the user name is too short - min 3 symbols
