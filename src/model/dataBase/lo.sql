@@ -39,7 +39,8 @@ FOREIGN KEY (user_id) REFERENCES lo.users(user_id)
 
 CREATE TABLE lo.shopping_lists (
 sl_id int PRIMARY KEY AUTO_INCREMENT,
-list_id int NOT NULL UNIQUE,
+in_date DATE NOT NULL, 
+is_paid BOOLEAN NOT NULL, 
 list_name VARCHAR(25) NOT NULL,
 user_id int NOT NULL,
 FOREIGN KEY (user_id) REFERENCES lo.users(user_id)
@@ -50,5 +51,5 @@ se_id int PRIMARY KEY AUTO_INCREMENT,
 item_name VARCHAR(100) NOT NULL,
 item_value DOUBLE PRECISION,
 list_id int NOT NULL,
-FOREIGN KEY (list_id) REFERENCES lo.shopping_lists(list_id)
+FOREIGN KEY (sl_id) REFERENCES lo.shopping_lists(list_id)
 );

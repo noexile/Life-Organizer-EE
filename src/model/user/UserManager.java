@@ -18,6 +18,7 @@ import model.dataBase.DBManager;
 import model.events.DatedEvent;
 import model.events.NotificationEvent;
 import model.events.PaymentEvent;
+import model.events.ShoppingEntry;
 import model.events.ShoppingList;
 import model.events.TODOEvent;
 import model.exceptions.IllegalAmountException;
@@ -27,10 +28,11 @@ public class UserManager {
 	private User user;
 	private DBManager dbmanager;
 	
-	public UserManager(User user) {
+	public UserManager(User user){
 		this.user = user;
 		this.dbmanager = DBManager.getInstance();
 		this.generateAllPaymentEventFromDBForUser(this.user);
+		this.generateAllShoppingListFromDBForUser(this.user);
 		generateAllToDoFromDBForUser(this.user);
 	}
 	
@@ -232,11 +234,69 @@ public class UserManager {
 	
 	/*--------------SHOPPING LIST EVENT---------------*/
 	
+	private void updateShoppingListStatusINDB(ShoppingList list) throws SQLException{
+		String statement = "UPDATE "+DBManager.getDbName()+"."+DBManager.ColumnNames.SHOPPING_LISTS+" SET is_paid = true WHERE sl_id = "+list.getUniqueIDForPayment();
+		try(Statement st = this.dbmanager.getConnection().createStatement()){
+			st.executeQuery(statement);
+		}
+	}
+	
+	private void generateAllShoppingListFromDBForUser(User user){
+		String statement = "SELECT sl_id,list_name,in_date,is_paid FROM "+DBManager.getDbName()+"."+DBManager.ColumnNames.SHOPPING_LISTS.toString()+" WHERE user_id = "+user.getUniqueDBId();
+		try(Statement st = this.dbmanager.getConnection().createStatement();ResultSet rs = st.executeQuery(statement);){
+			while(rs.next()){
+				String name = rs.getString(2);
+				int uniqueID = rs.getInt(1);
+				LocalDate date = rs.getDate(3).toLocalDate();
+				boolean isPaid = rs.getBoolean(4);
+				
+				ArrayList<ShoppingEntry> entriesFromDB = new ArrayList<>();
+				String secondStatement = "SELECT se_id,item_name,item_value FROM "+DBManager.getDbName()+"."+DBManager.ColumnNames.SHOPPING_ENTRIES.toString()+" WHERE list_id = "+uniqueID;
+				try(
+						Statement state = this.dbmanager.getConnection().createStatement();
+						ResultSet secondSet = state.executeQuery(secondStatement);
+					){
+					while(rs.next()){
+						entriesFromDB.add(new ShoppingEntry(secondSet.getString(2), secondSet.getDouble(3),secondSet.getInt(1)));
+					}
+				}
+				
+				this.user.addShoppingList(new ShoppingList(name, isPaid, uniqueID, date, entriesFromDB));
+			}
+		}catch(SQLException | IllegalAmountException e){
+			System.out.println("PRoblem with generate all shopping lists");
+			System.out.println(e.getMessage());
+		}
+		
+		
+	}
+	
+	private void insertNewShoppingListINDB(String name) throws SQLException{
+		String query = "INSERT INTO "+DBManager.getDbName()+"."+DBManager.ColumnNames.SHOPPING_LISTS+" (list_name,in_date,is_paid,user_id) VALUES (?,?,?,?);";
+		try(
+				PreparedStatement st = (PreparedStatement) this.dbmanager.getConnection().prepareStatement(query);
+				){
+			st.setString(1, name);
+			st.setDate(2, Date.valueOf(LocalDate.now()));
+			st.setBoolean(3, false);
+			st.setDouble(4, 0);
+			st.executeUpdate();
+		}
+	}
+	
+	private void deleteShoppingListFromDB(ShoppingList list) throws SQLException{
+		String statement = "DELETE FROM "+DBManager.getDbName()+"."+DBManager.ColumnNames.SHOPPING_LISTS+" WHERE sl_id = "+list.getUniqueIDForPayment();
+		try(Statement st = this.dbmanager.getConnection().createStatement()){
+			st.executeQuery(statement);
+		}
+	}
+	
 	public void addShoppingList(ShoppingList shoppingList) {
         this.user.addShoppingList(shoppingList);
 	}
 
-	public void removeShoppingList(ShoppingList list) {
+	public void removeShoppingList(ShoppingList list) throws SQLException {
+		this.deleteShoppingListFromDB(list);
 		this.user.removeShoppingList(list);
 	}
 	
@@ -244,7 +304,8 @@ public class UserManager {
 		return (ArrayList<ShoppingList>) Collections.unmodifiableList(this.user.getShoppingLists());
 	}
 	
-	public void createShoppingList(String name){
+	public void createShoppingList(String name) throws IllegalAmountException, SQLException{
+		this.insertNewShoppingListINDB(name);
 		this.user.createShoppingList(name);
 	}
 	
@@ -252,20 +313,60 @@ public class UserManager {
 		this.user.modifyShoppingList(entry, name);
 	}
 	
-	public void addItemToShoppingList(ShoppingList list, String itemName){
-		this.user.addItemToShoppingList(list, itemName);
+	public void addItemToShoppingList(ShoppingList list, ShoppingEntry entry) throws SQLException{
+		this.insertShoppingEntryINDB(entry, list.getUniqueIDForPayment());
+		this.user.addItemToShoppingList(list,this.getLastAddedEntryINDB(list.getUniqueIDForPayment()));
 	}
 	
-	public void addItemToShoppingList(ShoppingList list, String itemName, double price){
-		this.user.addItemToShoppingList(list, itemName, price);
+	public void removeItemFromShoppingList(ShoppingList list, ShoppingEntry entry) throws SQLException{
+		this.deleteShoppingEntryFromDB(entry);
+		this.user.removeItemFromShoppingList(list, entry);
 	}
 	
-	public void removeItemFromShoppingList(ShoppingList list, String itemName){
-		this.user.removeItemFromShoppingList(list, itemName);
-	}
-	
-	public void payShoppingList(ShoppingList list, double amount){
+	public void payShoppingList(ShoppingList list, double amount) throws SQLException{
+		this.updateShoppingListStatusINDB(list);
 		this.user.payShoppingList(list, amount);
+	}
+	
+	private void insertShoppingEntryINDB(ShoppingEntry newEntry,int listID) throws SQLException{
+		String statement = "INSERT INTO "+DBManager.getDbName()+"."+DBManager.ColumnNames.SHOPPING_ENTRIES.toString()+" (item_name,item_value,list_id) VALUES (?,?,?);";
+		try(
+				PreparedStatement stat = (PreparedStatement) this.dbmanager.getConnection().prepareStatement(statement);
+				
+				){
+			stat.setString(1, newEntry.getName());
+			stat.setDouble(2,newEntry.getAmount());
+			stat.setInt(3, listID);
+		}
+	}
+	
+	private ShoppingEntry getLastAddedEntryINDB(int listID) throws SQLException{
+		ShoppingEntry entry = null;
+		String statement = "SELECT se_id,item_name,item_value FROM "+DBManager.getDbName()+"."+DBManager.ColumnNames.SHOPPING_ENTRIES.toString()+" WHERE se_id = (SELECT MAX(se_id) FROM "
+																	+DBManager.getDbName()+"."+DBManager.ColumnNames.SHOPPING_ENTRIES.toString()+" HAVING list_id = "+listID;
+		try(
+				Statement st = this.dbmanager.getConnection().createStatement();
+				ResultSet rs = st.executeQuery(statement);
+				){
+			while(rs.next()){
+				int uniqueID = rs.getInt(1);
+				String name = rs.getString(2);
+				double amount = rs.getDouble(3);
+				entry = new ShoppingEntry(name, amount, uniqueID);
+				break;
+			}
+		}
+		return entry;
+		
+	}
+	
+	private void deleteShoppingEntryFromDB(ShoppingEntry entry) throws SQLException{
+		String statement = "DELETE FROM "+DBManager.getDbName()+"."+DBManager.ColumnNames.SHOPPING_ENTRIES.toString()+" WHERE se_id = "+entry.getUniqueID();
+		try(
+				Statement st = this.dbmanager.getConnection().createStatement();
+				){
+			st.executeQuery(statement);
+		}
 	}
 	
 	/*--------------TODO LIST EVENT---------------*/

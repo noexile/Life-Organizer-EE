@@ -4,6 +4,7 @@ import model.accounts.DebitAccount;
 import model.events.DatedEvent;
 import model.events.NotificationEvent;
 import model.events.PaymentEvent;
+import model.events.ShoppingEntry;
 import model.events.ShoppingList;
 import model.events.TODOEvent;
 import model.exceptions.IllegalAmountException;
@@ -169,7 +170,7 @@ public class User {
 		return this.shoppingList;
 	}
 
-	protected void createShoppingList(String name) {
+	protected void createShoppingList(String name) throws IllegalAmountException {
 		if (name.trim().isEmpty()) {
 			try {
 				throw new IncorrectInputException("You cannot create a shopping list without a name!");
@@ -192,73 +193,44 @@ public class User {
 			} catch (IncorrectInputException e) {}
 		}
 		
-		entry.setName(name);
+		entry.setTitle(name);
 	}
 	
-	protected void addItemToShoppingList(ShoppingList list, String itemName) {
+	protected void addItemToShoppingList(ShoppingList list, ShoppingEntry entry) {
 		if (list == null) {
 			try {
 				throw new NotExistException("Must select ShoppingList to add item in it!");
 			} catch (NotExistException e) {}
 		}
 		
-		if (itemName.trim().isEmpty()) {
-			try {
-				throw new IncorrectInputException("The input item name must not be empty!");
-			} catch (IncorrectInputException e) {}
-		}
-		
-		list.addEntry(itemName,(double) 0);
-	}
-	
-	protected void addItemToShoppingList(ShoppingList list, String itemName, double price) {
-		if (list == null) {
-			try {
-				throw new NotExistException("Must select ShoppingList to add item in it!");
-			} catch (NotExistException e) {}
-		}
-		
-		if (itemName.trim().isEmpty()) {
-			try {
-				throw new IncorrectInputException("The input item name must not be empty!");
-			} catch (IncorrectInputException e) {}
-		}
-			list.addEntry(itemName, price);
+		list.addEntry(entry);
 		
 	}
 	
-	protected void removeItemFromShoppingList(ShoppingList list, String itemName) {
+	
+	protected void removeItemFromShoppingList(ShoppingList list,ShoppingEntry entry) {
 		if (list == null) {
 			try {
 				throw new NotExistException("Must select ShoppingList to edit!");
 			} catch (NotExistException e) {}
 		}
-		
-		if (!list.getShoppingEntries().containsKey(itemName)) {
-			try {
-				throw new IncorrectInputException("The item does not exist in the shopping list!");
-			} catch (IncorrectInputException e) {}
-		}
-		
-		list.getShoppingEntries().get(itemName);
+		list.removeEntry(entry);
 	}
 	
 	protected void payShoppingList(ShoppingList list, double amount) {
 		if (list == null) {
 			try {
+				list.setAmount(amount);
 				throw new NotExistException("Must select ShoppingList to edit!");
-			} catch (NotExistException e) {}
+			} catch (NotExistException e) {} catch (IllegalAmountException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 		
-		double temp = this.money.doubleValue();
-		if (temp < amount) {
-			try {
-				throw new IllegalAmountException("Not enough money in the account!");
-			} catch (IllegalAmountException e) {}
-		}
-
-		BigDecimal tempDecimal = new BigDecimal(amount);
-		this.money.subtract(tempDecimal);
+		double temp = -amount;
+		BigDecimal tempDecimal = new BigDecimal(temp);
+		this.money.add(tempDecimal);
 		
 	}
 	

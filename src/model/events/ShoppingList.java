@@ -2,86 +2,70 @@ package model.events;
 
 import model.exceptions.IllegalAmountException;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.time.LocalDate;
+import java.util.ArrayList;
 
-public class ShoppingList {
+public class ShoppingList extends PaymentEvent{
 
-	private String name;
-	private boolean isPaid;
-	private double amount;
-	private HashMap<String, Double> shoppingEntries;
+	private ArrayList<ShoppingEntry> shoppingEntries;
 
-	public ShoppingList(String name) {
-		this.setName(name);
-		this.amount = 0;
-		this.isPaid = false;
-		this.shoppingEntries = new HashMap<String, Double>();
-	}
-
-	// methods
-	public void addEntry(String name, Double amount) {
-		if (setEntryAmount(amount)) {
-			this.shoppingEntries.put(name, amount);
-		}
+	public ShoppingList(String name) throws IllegalAmountException {
+		super(name,"non",0,false,false,LocalDate.now());
+		this.shoppingEntries = new ArrayList<ShoppingEntry>();
 	}
 	
-	private boolean setEntryAmount(double amount) {
-		try {
-			if (amount < 0) {
-				throw new IllegalAmountException("Invalid value of entry !");
-			}
-		} catch (IllegalAmountException e) {
-			System.out.println(e.getMessage());
-			return false;
+	public ShoppingList(String name,boolean isPaid, int uniqueID,LocalDate date,ArrayList<ShoppingEntry> shoppingEntries) throws IllegalAmountException{
+		super(name,"non",0,false,isPaid,date,uniqueID);
+		double amount = 0;
+		StringBuilder description = null;
+		for(ShoppingEntry entry : shoppingEntries){
+			amount += entry.getAmount();
+			description.append(entry.getName()+" : "+new Double(amount).toString()+"\n");
 		}
-		
-		return true;
+		super.setAmount(amount);
+		super.setDescription(description.toString());
 	}
+	
+	// methods
+	public void addEntry(ShoppingEntry entry) {
+		this.shoppingEntries.add(entry);
+	}
+	
 
-	public void removeEntry(String name) {
-		if (this.shoppingEntries.containsKey(name)) {
-			this.shoppingEntries.remove(name);
-		}
+	public void removeEntry(ShoppingEntry entry) {
+		this.shoppingEntries.remove(entry);
 	}
 
 	public double getAmountOfAllEntries() {
 		double currentAmountOfList = 0;
 		
-		for (Map.Entry<String, Double> map : this.shoppingEntries.entrySet()) {
-			if (map.getKey() == null) {
-				continue;
-			}
-			
-			currentAmountOfList += map.getValue();
+		for(ShoppingEntry entry : this.shoppingEntries){
+			currentAmountOfList += entry.getAmount();
 		}
 		
 		return currentAmountOfList;
 	}
 
+	//for remove
 	public void setAmountOfShoppingList(double amount) throws IllegalAmountException {
-		if (this.amount > 0) {
-			this.amount = amount;
+		if (amount > 0) {
+			this.setAmount(amount);
 		} else {
 			throw new IllegalAmountException("The amount must be positive !");
 		}
 	}
 	
 	// getters and setters
-	boolean getIsPaid() {
-		return this.isPaid;
-	}
-
-	public void setName(String name){
-		this.name = name;
+	public boolean getIsPaid() {
+		return super.getIsPaid();
 	}
 	
 	public String getName(){
-		return this.name;
+		return super.getTitle();
 	}
 	
-	public HashMap<String, Double> getShoppingEntries() {
-		return shoppingEntries;
+	public ArrayList<ShoppingEntry> getShoppingEntries(){
+		return this.shoppingEntries;
 	}
 
 }
