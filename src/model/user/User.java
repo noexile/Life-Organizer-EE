@@ -24,7 +24,7 @@ public class User {
     private int uniqueDBId;
 	private String email;
 
-	private ArrayList<DatedEvent> events;
+	private ArrayList<PaymentEvent> events;
 	private HashMap<String, ArrayList<TODOEvent>> todos;//type -> events
 	private ArrayList<ShoppingList> shoppingList;
 	private ArrayList<DebitAccount> debitAccounts;
@@ -36,7 +36,7 @@ public class User {
         this.setPassword(password);
         this.uniqueDBId = uniqueDBId;
         this.email = email;
-        
+        this.money = new BigDecimal(0.1);
         generateCollectionsForUser();
 	}
 	
@@ -44,7 +44,8 @@ public class User {
 		this.setUserName(userName);
 		this.setPassword(password);
 		this.email = email;
-		
+		this.money = new BigDecimal(0.1);
+		 
 		generateCollectionsForUser();
 	}
 
@@ -54,7 +55,7 @@ public class User {
 		this.debitAccounts = new ArrayList<>();
 		this.todos = new HashMap<>();
 		this.shoppingList = new ArrayList<>();
-		this.events = new ArrayList<DatedEvent>();
+		this.events = new ArrayList<PaymentEvent>();
 		this.notifications = new ArrayList<>();
     }
 
@@ -89,12 +90,7 @@ public class User {
 			try {
 				throw new IncorrectInputException("The input description must not be empty!");
 			} catch (IncorrectInputException e) {}
-		}else if(Event.getUniqueIDForPayment() == null){
-			try {
-				throw new IncorrectInputException("The input description must not be empty!");
-			} catch (IncorrectInputException e) {}
 		}
-
 		this.events.add(Event);
 	}
 	
@@ -137,21 +133,18 @@ public class User {
 				throw new NotExistException("Must select payment event to pay!");
 			} catch (NotExistException e) {}
 		}
-
-		payEvent(event.getAmount());
+		
+		double amount = (event.getIsIncome()) ? (event.getAmount()) : (-event.getAmount());
+		
+		payEvent(amount);
 		event.setPaid(true);
 	}
 
 	private void payEvent(double amount) {
 		double temp = this.money.doubleValue();
-		if (temp < amount) {
-			try {
-				throw new IllegalAmountException("Not enough money in the account!");
-			} catch (IllegalAmountException e) {}
-		}
-
+		
 		BigDecimal tempDecimal = new BigDecimal(amount);
-		this.money.subtract(tempDecimal);
+		this.money = this.money.add(tempDecimal);
 	}
 	
 	/*--------------SHOPPING LIST EVENT---------------*/
@@ -431,11 +424,11 @@ public class User {
 		return this.userName;
 	}
 
-	protected ArrayList<DatedEvent> getEvents() {
+	protected ArrayList<PaymentEvent> getEvents() {
 		return events;
 	}
     
-	protected void addEvent(DatedEvent event){
+	protected void addEvent(PaymentEvent event){
         if (event == null){
             return;
         }
@@ -452,4 +445,9 @@ public class User {
 		return this.email;
 	}
 
+	protected BigDecimal getMoney() {
+		return money;
+	}
+	
+	
 }

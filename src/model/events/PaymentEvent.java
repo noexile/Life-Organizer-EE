@@ -6,7 +6,7 @@ import java.time.LocalDate;
 
 public class PaymentEvent extends DatedEvent {
 
-	private Integer uniqueIDPayment;
+	private int uniqueIDPayment;
 	private double amount;
 	private boolean isIncome;
 	private boolean isPaid;
@@ -81,7 +81,15 @@ public class PaymentEvent extends DatedEvent {
 		super.setDate(dateTime);
 	}
     
-	public Integer getUniqueIDForPayment(){
+	public int getUniqueIDForPayment(){
 		return this.uniqueIDPayment;
+	}
+	
+	public String getTitle(){
+		return super.getTitle();
+	}
+	
+	public String getDescription(){
+		return super.getDescription();
 	}
 }

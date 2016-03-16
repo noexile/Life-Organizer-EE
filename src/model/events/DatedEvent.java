@@ -19,4 +19,5 @@ public abstract class DatedEvent extends Event {
     public void setDate(LocalDate dateTime){
     	this.dateTime = dateTime;
     }
+    
 }
