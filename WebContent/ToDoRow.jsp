@@ -8,13 +8,25 @@
 <title>ToDo</title>
 </head>
 <body>
-	<table>
-			<form action="ToDoModifyServlet" method="post">
+	<table border="2">
+		<form action="ToDoModifyServlet" method="post">
+			<tr>
+				<td>Title:</td>
+				<td>Description:</td>
+				<td>Term:</td>
+			</tr>
+			<tr>
 				<td><c:out value="${requestScope.todo.getTitle()}"/></td>
-				<td><c:out value="${requestScope.todo.getDescription()}"/></td>
+				<input type="hidden" name="title" value="${requestScope.todo.getTitle()}">	
+				<td><c:out value="${requestScope.todo.getDescription()}"/></td>	
+				<input type="hidden" name="description" value="${requestScope.todo.getDescription()}">	
 				<td><c:out value="${requestScope.todo.getType()}"/></td>
+				<input type="hidden" name="type" value="${requestScope.todo.getType()}">	
+				<input type="hidden" name="id" value="${requestScope.todo.getUniqueID()}">	
 				<td><input type="submit" value="Edit"></td>
-			</form>
+			</tr>
+			
+		</form>
 </table>
 </body>
 </html>

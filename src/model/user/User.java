@@ -256,6 +256,7 @@ public class User {
     	for(TODOEvent currEvent : this.getTodos()){
     		if(currEvent.getUniqueID() == id){
     			this.getTodos().remove(event);
+    			return;
     		}
     	}
     }
@@ -278,29 +279,16 @@ public class User {
 		this.addTODO(new TODOEvent(name, description, type));
 	}
     
-    protected void modifyTODO(TODOEvent todo, String name, String description) {
-		/*
-		 * isIncome will be button (radio?) and will be a must to continue - no
-		 * need for check in the OOP isPayed will be button (radio?) and will be a must to continue - no need for check in the OOP
-		 */
-		if (todo == null) {
-			try {
-				throw new NotExistException("Must select TODO to edit!");
-			} catch (NotExistException e) {}
-		}
-		
-		if (name == null || name.trim().isEmpty()) {
-			try {
-				throw new IncorrectInputException("The input name must not be empty!");
-			} catch (IncorrectInputException e) {}
-		} else if (description == null || description.trim().isEmpty()) {
-			try {
-				throw new IncorrectInputException("The input description must not be empty!");
-			} catch (IncorrectInputException e) {}
-		}
-
-		todo.setTitle(name);
-		todo.setDescription(description);
+    protected void modifyTODO(String title, String description, String type, int id) {
+	
+    	for (int i = 0; i < todos.size(); i++) {
+			if (todos.get(i).getUniqueID() == id) {
+				todos.get(i).setTitle(title);
+				todos.get(i).setDescription(description);
+				todos.get(i).setType(type);  
+				return;
+			}
+		}  	
 	}
 	
 	/*--------------NOTIFICATION EVENTS LIST--------------*/

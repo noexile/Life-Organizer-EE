@@ -1,6 +1,7 @@
 package model.user;
 
 import java.math.BigDecimal;
+import java.sql.Connection;
 import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -396,15 +397,69 @@ public class UserManager {
     }
 
 	public void removeTODOEvent(TODOEvent event){
-		this.user.removeTODOEvent(event);
+		// remove todo from db
+		Connection conn = null;
+		
+		try {
+			String removeToDo = "DELETE FROM " + DBManager.getDbName() + "." + DBManager.ColumnNames.TODOS.toString().toLowerCase() + " WHERE todo_id = " + event.getUniqueID() + ";";
+				
+			conn = DBManager.getInstance().getConnection();
+			conn.setAutoCommit(false);
+			
+			Statement st = conn.createStatement();
+			st.executeUpdate(removeToDo);	
+
+			// remove todo from collection
+			this.user.removeTODOEvent(event);
+			
+			conn.setAutoCommit(true);
+			conn.commit();
+		} catch (SQLException e) {
+			System.out.println("Error in executing delete todo request: " + e.getMessage());
+			try {
+				conn.rollback();
+			} catch (SQLException e1) {}
+		}
+		
+		// close connection ???		
 	}
 	
 	public void createTODO(String name, String description, String type){
 		this.user.createTODO(name, description, type);
 	}
 	
-	public void modifyTODO(TODOEvent todo, String name, String description){
-		this.user.modifyTODO(todo, name, description);
+	public void modifyTODO(String title, String description, String type, int id){
+		
+		Connection conn = null;
+		
+		try {
+			String updateToDo = "UPDATE " + DBManager.getDbName() + "." + DBManager.ColumnNames.TODOS.toString().toLowerCase() + " SET todo_name = ?, todo_type = ?, description = ? WHERE todo_id =" + id + ";";
+				
+			conn = DBManager.getInstance().getConnection();
+			conn.setAutoCommit(false);
+			
+			PreparedStatement ps = (PreparedStatement) conn.prepareStatement(updateToDo);
+			ps.setString(1, title);
+			ps.setString(2, type);
+			ps.setString(3, description);
+			
+			ps.executeUpdate();
+		    
+			// update todo in collection
+			this.user.modifyTODO(title, description, type, id);
+			
+			conn.commit();
+			conn.setAutoCommit(true);
+			ps.close();
+		} catch (SQLException e) {
+			System.out.println("Error in executing delete todo request: " + e.getMessage());
+			try {
+				conn.rollback();
+			} catch (SQLException e1) {}
+		}
+		
+		// close connection ???	
+		
 	}
 	
 	private void generateAllToDoFromDBForUser(User user2) {
@@ -430,12 +485,16 @@ public class UserManager {
 		}
 	}
 	
-	/*--------------DebitAccounts ---------------*/
-	
-	 private void addToDo(TODOEvent todoEvent) {
-		// TODO Auto-generated method stub
-		
+	public TODOEvent getToDoById(int id) {
+		for (int i = 0; i < this.user.getTodos().size(); i++) {
+			if (this.user.getTodos().get(i).getUniqueID() == id) {
+				return this.user.getTodos().get(i);
+			}
+		}
+		return null;
 	}
+	
+	/*--------------DebitAccounts ---------------*/
 
 	 public ArrayList<DebitAccount> getDebitAccounts(){
 	        return (ArrayList<DebitAccount>) Collections.unmodifiableList(this.user.getDebitAccounts());
@@ -478,4 +537,5 @@ public class UserManager {
 	 public double getMoney(){
 		 return this.user.getMoney().doubleValue();
 	 }
+
 }

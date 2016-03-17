@@ -23,5 +23,9 @@ public class TODOEvent extends Event{
 	public int getUniqueID() {
 		return uniqueID;
 	}
+	
+	public void setType(String type) {
+		this.type = type;
+	}
 
 }

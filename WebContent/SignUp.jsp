@@ -46,9 +46,6 @@
 							<input type="submit" value="Register" name="Register">
 							<a href="HomePage.jsp"><input type="button" value="Back" style="height:20px; width:74px"></a>
 						</td>
-						
-							
-			
 					</tr>
 				</form>
 			</table>
