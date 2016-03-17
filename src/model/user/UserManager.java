@@ -256,7 +256,7 @@ public class UserManager {
 						Statement state = this.dbmanager.getConnection().createStatement();
 						ResultSet secondSet = state.executeQuery(secondStatement);
 					){
-					while(rs.next()){
+					while(secondSet.next()){
 						entriesFromDB.add(new ShoppingEntry(secondSet.getString(2), secondSet.getDouble(3),secondSet.getInt(1)));
 					}
 				}
@@ -300,8 +300,8 @@ public class UserManager {
 		this.user.removeShoppingList(list);
 	}
 	
-	public ArrayList<ShoppingList> getShoppingLists(){
-		return (ArrayList<ShoppingList>) Collections.unmodifiableList(this.user.getShoppingLists());
+	public List<ShoppingList> getShoppingLists(){
+		return Collections.unmodifiableList(this.user.getShoppingLists());
 	}
 	
 	public void createShoppingList(String name) throws IllegalAmountException, SQLException{

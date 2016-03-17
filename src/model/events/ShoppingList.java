@@ -17,10 +17,12 @@ public class ShoppingList extends PaymentEvent{
 	public ShoppingList(String name,boolean isPaid, int uniqueID,LocalDate date,ArrayList<ShoppingEntry> shoppingEntries) throws IllegalAmountException{
 		super(name,"non",0,false,isPaid,date,uniqueID);
 		double amount = 0;
-		StringBuilder description = null;
+		this.shoppingEntries = new ArrayList<ShoppingEntry>();
+		StringBuilder description = new StringBuilder();
 		for(ShoppingEntry entry : shoppingEntries){
 			amount += entry.getAmount();
-			description.append(entry.getName()+" : "+new Double(amount).toString()+"\n");
+			description.append(entry.getName()+" : "+new Double(entry.getAmount()).toString()+"\n");
+			this.shoppingEntries.add(entry);
 		}
 		super.setAmount(amount);
 		if(description != null){
