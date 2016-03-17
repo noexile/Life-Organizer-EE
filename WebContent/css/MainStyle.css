@@ -36,6 +36,19 @@ p{
 	text-align:center;
 }
 
+.right_side2{
+	text-align:center;
+	line-height: 12px;
+     width: 390px;
+     font-size: 24px;
+     font-family: tahoma;
+     margin-top: 99px;
+     margin-right: 300px;
+     position:absolute;
+     top:0;
+     right:0;
+}
+
 .tableRowsForHistory {
 	width: 800px;
     height: 600px;

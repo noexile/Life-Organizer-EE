@@ -28,7 +28,7 @@
 		<td><a href="MyAccounts.jsp"><font color="black"><p>My Accounts<br/></br></br>List</p></font></a></td>
 		</tr>
 		<tr>
-		<td><a href="MyShoppingList.jsp"><font color="black"><p>My Shopping<br/></br></br>List</p></font></a></td>
+		<td><form action="ShowShoppingListServlet" method="post"><a href="ShowShoppingListServlet"><font color="black"><p>My Shopping<br/></br></br>List</p></font></a></form></td>
 		</tr>
 	</table>
 </body>

@@ -279,17 +279,19 @@ public class User {
 		this.addTODO(new TODOEvent(name, description, type));
 	}
     
-    protected void modifyTODO(String title, String description, String type, int id) {
+    
+     protected void modifyTODO(String title, String description, String type, int id) {
+    		 	
+    		     	for (int i = 0; i < todos.size(); i++) {
+    		 			if (todos.get(i).getUniqueID() == id) {
+    		 				todos.get(i).setTitle(title);
+    		 				todos.get(i).setDescription(description);
+    		 				todos.get(i).setType(type);  
+    		 				return;
+    		 			}
+    		 	}  	
+    }
 	
-    	for (int i = 0; i < todos.size(); i++) {
-			if (todos.get(i).getUniqueID() == id) {
-				todos.get(i).setTitle(title);
-				todos.get(i).setDescription(description);
-				todos.get(i).setType(type);  
-				return;
-			}
-		}  	
-	}
 	
 	/*--------------NOTIFICATION EVENTS LIST--------------*/
 	
