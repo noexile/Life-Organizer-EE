@@ -25,6 +25,10 @@ public class CreateNewPaymentServlet extends HttpServlet {
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		HttpSession session = request.getSession();
 		RequestDispatcher errorDispatcher = request.getRequestDispatcher("AddPayment.jsp");
+		if(session.getAttribute("loggedUserManager") == null || session.isNew()){
+			response.sendRedirect("HomePage.jsp");
+			return;
+		}
 		String name = request.getParameter("paymentName");
 		String statusPayment = request.getParameter("statuspayment");
 		String date = request.getParameter("date");

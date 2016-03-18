@@ -24,6 +24,10 @@ public class EditPaymentServlet extends HttpServlet {
  
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		System.out.println(request.getParameter("currPayment"));
+		if(request.getSession().getAttribute("loggedUserManager") == null || request.getSession().isNew()){
+			response.sendRedirect("HomePage.jsp");
+			return;
+		}
 		int id = Integer.parseInt(request.getParameter("currPayment"));
 		PaymentEvent e = null;
 		for(PaymentEvent event : ((UserManager)request.getSession().getAttribute("loggedUserManager")).getEvents()){
@@ -40,6 +44,9 @@ public class EditPaymentServlet extends HttpServlet {
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		HttpSession session = request.getSession();
 		UserManager manager = (UserManager) request.getSession().getAttribute("loggedUserManager");
+		if(session.getAttribute("loggedUserManager") == null){
+			response.sendRedirect("HomePage.jsp");
+		}
 		RequestDispatcher errorDispatcher = request.getRequestDispatcher("EditPayment.jsp");
 		String name = request.getParameter("paymentName");
 		String statusPayment = request.getParameter("statuspayment");

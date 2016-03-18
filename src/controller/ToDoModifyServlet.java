@@ -14,7 +14,12 @@ public class ToDoModifyServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-
+		
+		if(request.getSession().getAttribute("loggedUserManager") == null || request.getSession().isNew()){
+			response.sendRedirect("HomePage.jsp");
+			return;
+		}
+		
 		RequestDispatcher rd = request.getRequestDispatcher("EditToDo.jsp");
 		
 		String title = request.getParameter("title");

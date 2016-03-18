@@ -1,6 +1,5 @@
 package model.user;
 
-import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.ResultSet;
@@ -32,8 +31,8 @@ public class UserManager {
 	public UserManager(User user){
 		this.user = user;
 		this.dbmanager = DBManager.getInstance();
-		this.generateAllPaymentEventFromDBForUser(this.user);
-		this.generateAllShoppingListFromDBForUser(this.user);
+		generateAllPaymentEventFromDBForUser(this.user);
+		generateAllShoppingListFromDBForUser(this.user);
 		generateAllToDoFromDBForUser(this.user);
 	}
 	
@@ -52,7 +51,7 @@ public class UserManager {
 		return byDate;
 	}
 	
-	public void addPaymentEventINDataBase(PaymentEvent event) throws SQLException{
+	synchronized public void addPaymentEventINDataBase(PaymentEvent event) throws SQLException{
 		PreparedStatement st = null;
 		try{
 			String statement = "INSERT INTO " + DBManager.getDbName() + ".payment_events (user_id,pe_name,description,amount,is_paid,is_income,for_date) VALUES (?,?,?,?,?,?,?);";
@@ -72,7 +71,7 @@ public class UserManager {
 		}
 	}
 	
-	private synchronized PaymentEvent getTheLastAddedPaymentEventInDB(){
+	synchronized private PaymentEvent getTheLastAddedPaymentEventInDB(){
 		Statement st=null;
 		ResultSet rs = null;
 		PaymentEvent lastAdded = null;
@@ -143,7 +142,7 @@ public class UserManager {
 	}
 	
 	private void removePaymentEventFromDB(PaymentEvent event) throws SQLException{
-		String statment = "DELETE FROM "+DBManager.getDbName()+"."+DBManager.ColumnNames.PAYMENT_EVENTS.toString()+" WHERE pe_id = "+event.getUniqueIDForPayment();
+		String statment = "DELETE FROM "+DBManager.getDbName()+"."+DBManager.ColumnNames.PAYMENT_EVENTS.toString().toLowerCase()+" WHERE pe_id = "+event.getUniqueIDForPayment();
 		try(Statement st = this.dbmanager.getConnection().createStatement()){
 			st.executeUpdate(statment);
 		}
@@ -163,8 +162,9 @@ public class UserManager {
 	
 	
 	public void createPaymentEvent(String eventTitle, String description, double amount, boolean isIncome, boolean isPaid, LocalDate forDate) throws IllegalAmountException, SQLException{
-		this.addPaymentEventINDataBase(new PaymentEvent(eventTitle, description, amount, isIncome, isPaid, forDate));
-		this.user.createPaymentEvent(this.getTheLastAddedPaymentEventInDB());
+		PaymentEvent pe = new PaymentEvent(eventTitle, description, amount, isIncome, isPaid, forDate);
+		addPaymentEventINDataBase(pe);
+		this.user.createPaymentEvent(pe);
 	}
 	
 	public void modifyPaymentEvent(PaymentEvent event, String eventTitle, String description, double amount, boolean isIncome, boolean isPaid, LocalDate forDate) throws IllegalAmountException, SQLException{
@@ -184,7 +184,7 @@ public class UserManager {
 	}
 	
 	private void updatePaymentEventINDB(String eventTitle, String description, double amount, boolean isIncome, boolean isPaid, LocalDate forDate, int uniqueIDForPayment) throws SQLException{
-		String update = "UPDATE "+DBManager.getDbName()+"."+DBManager.ColumnNames.PAYMENT_EVENTS.toString()+" SET pe_name = ?,description = ?, amount=?, is_paid=?, is_income=?, for_date=? WHERE pe_id = "+uniqueIDForPayment;
+		String update = "UPDATE "+DBManager.getDbName()+"."+DBManager.ColumnNames.PAYMENT_EVENTS.toString().toLowerCase()+" SET pe_name = ?,description = ?, amount=?, is_paid=?, is_income=?, for_date=? WHERE pe_id = "+uniqueIDForPayment;
 		try(PreparedStatement st = (PreparedStatement) this.dbmanager.getConnection().prepareStatement(update)){
 			st.setString(1, eventTitle);
 			st.setString(2, description);
@@ -201,7 +201,7 @@ public class UserManager {
 	}
 	
 	private void generateAllPaymentEventFromDBForUser(User user){
-		String select ="SELECT pe_id,pe_name,description,amount,is_paid,is_income,for_date FROM "+DBManager.getDbName()+"."+DBManager.ColumnNames.PAYMENT_EVENTS.toString()+" WHERE (user_id = "+this.user.getUniqueDBId()+")";
+		String select ="SELECT pe_id,pe_name,description,amount,is_paid,is_income,for_date FROM "+DBManager.getDbName()+"."+DBManager.ColumnNames.PAYMENT_EVENTS.toString().toLowerCase()+" WHERE (user_id = "+this.user.getUniqueDBId()+")";
 		ResultSet rs = null;
 		try(Statement statement = this.dbmanager.getConnection().createStatement()){
 			rs = statement.executeQuery(select);
@@ -238,7 +238,7 @@ public class UserManager {
 	private void updateShoppingListStatusINDB(ShoppingList list) throws SQLException{
 		String statement = "UPDATE "+DBManager.getDbName()+"."+DBManager.ColumnNames.SHOPPING_LISTS+" SET is_paid = true WHERE sl_id = "+list.getUniqueIDForPayment();
 		try(Statement st = this.dbmanager.getConnection().createStatement()){
-			st.executeQuery(statement);
+			st.executeUpdate(statement);
 		}
 	}
 	
@@ -273,20 +273,20 @@ public class UserManager {
 	}
 	
 	private void insertNewShoppingListINDB(String name) throws SQLException{
-		String query = "INSERT INTO "+DBManager.getDbName()+"."+DBManager.ColumnNames.SHOPPING_LISTS+" (list_name,in_date,is_paid,user_id) VALUES (?,?,?,?);";
+		String query = "INSERT INTO "+DBManager.getDbName()+"."+DBManager.ColumnNames.SHOPPING_LISTS.toString().toLowerCase()+" (list_name,in_date,is_paid,user_id) VALUES (?,?,?,?);";
 		try(
 				PreparedStatement st = (PreparedStatement) this.dbmanager.getConnection().prepareStatement(query);
 				){
 			st.setString(1, name);
 			st.setDate(2, Date.valueOf(LocalDate.now()));
 			st.setBoolean(3, false);
-			st.setDouble(4, 0);
+			st.setInt(4, this.user.getUniqueDBId());
 			st.executeUpdate();
 		}
 	}
 	
 	private void deleteShoppingListFromDB(ShoppingList list) throws SQLException{
-		String statement = "DELETE FROM "+DBManager.getDbName()+"."+DBManager.ColumnNames.SHOPPING_LISTS+" WHERE sl_id = "+list.getUniqueIDForPayment();
+		String statement = "DELETE FROM "+DBManager.getDbName()+"."+DBManager.ColumnNames.SHOPPING_LISTS.toString().toLowerCase()+" WHERE sl_id = "+list.getUniqueIDForPayment();
 		try(Statement st = this.dbmanager.getConnection().createStatement()){
 			st.executeUpdate(statement);
 		}
@@ -301,13 +301,13 @@ public class UserManager {
 		this.user.removeShoppingList(list);
 	}
 	
-	public List<ShoppingList> getShoppingLists(){
+	public ArrayList<ShoppingList> getShoppingLists(){
 		return this.user.getShoppingLists();
 	}
 	
 	public void createShoppingList(String name) throws IllegalAmountException, SQLException{
 		this.insertNewShoppingListINDB(name);
-		this.user.createShoppingList(name);
+		this.user.createShoppingList(this.getLastAddedListINDB(this.user.getUniqueDBId()));
 	}
 	
 	public void modifyShoppingList(ShoppingList entry, String name){
@@ -330,23 +330,23 @@ public class UserManager {
 	}
 	
 	private void insertShoppingEntryINDB(ShoppingEntry newEntry,int listID) throws SQLException{
-		String statement = "INSERT INTO "+DBManager.getDbName()+"."+DBManager.ColumnNames.SHOPPING_ENTRIES.toString()+" (item_name,item_value,list_id) VALUES (?,?,?);";
+		String statement = "INSERT INTO "+DBManager.getDbName()+"."+DBManager.ColumnNames.SHOPPING_ENTRIES.toString().toLowerCase()+" (item_name,item_value,list_id) VALUES (?,?,?);";
 		try(
 				PreparedStatement stat = (PreparedStatement) this.dbmanager.getConnection().prepareStatement(statement);
 				
 				){
+			
 			stat.setString(1, newEntry.getName());
 			stat.setDouble(2,newEntry.getAmount());
 			stat.setInt(3, listID);
-			stat.execute();
+			stat.executeUpdate();
 		}
 	}
 	
-	private ShoppingEntry getLastAddedEntryINDB(int listID) throws SQLException{
+	private ShoppingEntry  getLastAddedEntryINDB(int listID) throws SQLException{
 		ShoppingEntry entry = null;
-		String statement = "SELECT se_id,item_name,item_value FROM "+DBManager.getDbName()+"."+DBManager.ColumnNames.SHOPPING_ENTRIES.toString()+" WHERE se_id = (SELECT MAX(se_id) FROM " + 
-		DBManager.getDbName()+"."+DBManager.ColumnNames.SHOPPING_ENTRIES.toString()+" HAVING list_id = "+listID;
-		
+		String statement = "SELECT se_id,item_name,item_value FROM "+DBManager.getDbName()+"."+DBManager.ColumnNames.SHOPPING_ENTRIES.toString().toLowerCase()+" WHERE se_id = (SELECT MAX(se_id) FROM "
+																	+DBManager.getDbName()+"."+DBManager.ColumnNames.SHOPPING_ENTRIES.toString().toLowerCase()+" HAVING list_id = "+listID+")";
 		try(
 				Statement st = this.dbmanager.getConnection().createStatement();
 				ResultSet rs = st.executeQuery(statement);
@@ -355,6 +355,7 @@ public class UserManager {
 				int uniqueID = rs.getInt(1);
 				String name = rs.getString(2);
 				double amount = rs.getDouble(3);
+				System.out.println(uniqueID);
 				entry = new ShoppingEntry(name, amount, uniqueID);
 				break;
 			}
@@ -364,10 +365,34 @@ public class UserManager {
 	}
 	
 	private void deleteShoppingEntryFromDB(ShoppingEntry entry) throws SQLException{
-		String statement = "DELETE FROM "+DBManager.getDbName()+"."+DBManager.ColumnNames.SHOPPING_ENTRIES.toString()+" WHERE se_id = "+entry.getUniqueID();
-		try(Statement st = this.dbmanager.getConnection().createStatement()) {
+		String statement = "DELETE FROM "+DBManager.getDbName()+"."+DBManager.ColumnNames.SHOPPING_ENTRIES.toString().toLowerCase()+" WHERE se_id = "+entry.getUniqueID();
+		try(
+				Statement st = this.dbmanager.getConnection().createStatement();
+				){
 			st.executeUpdate(statement);
 		}
+	}
+	
+	private ShoppingList getLastAddedListINDB(int userID) throws IllegalAmountException, SQLException{
+		ShoppingList list = null;
+		String statement = "SELECT sl_id,list_name,in_date,is_paid FROM "+DBManager.getDbName()+"."+DBManager.ColumnNames.SHOPPING_LISTS.toString().toLowerCase()+" WHERE sl_id = (SELECT MAX(sl_id) FROM "
+																		 +DBManager.getDbName()+"."+DBManager.ColumnNames.SHOPPING_LISTS.toString().toLowerCase()+" HAVING user_id = "+userID+")";		
+		
+		try(
+				Statement st = this.dbmanager.getConnection().createStatement();
+				ResultSet rs = st.executeQuery(statement);
+				){
+			while(rs.next()){
+				int uniqueID = rs.getInt(1);
+				String name = rs.getString(2);
+				LocalDate date = rs.getDate(3).toLocalDate();
+				boolean isPaid = rs.getBoolean(4);
+				list = new ShoppingList(name,isPaid,uniqueID,date,new ArrayList<ShoppingEntry>());
+				break;
+			}
+		}
+		return list;
+		
 	}
 	
 	/*--------------TODO LIST EVENT---------------*/
@@ -377,7 +402,7 @@ public class UserManager {
 			this.dbmanager.getConnection().setAutoCommit(false);
 			int user_id = this.user.getUniqueDBId();
 			Statement st = this.dbmanager.getConnection().createStatement();
-			String insertToDo = "INSERT INTO lo.todos (user_id, todo_name, todo_type, description) VALUES (" + user_id + ", '" + event.getTitle() + "', '" + event.getType() + "', '" + event.getDescription() + "');";
+			String insertToDo = "INSERT INTO " + DBManager.getDbName() + "." + DBManager.ColumnNames.TODOS.toString().toLowerCase() + " (user_id, todo_name, todo_type, description) VALUES (" + user_id + ", '" + event.getTitle() + "', '" + event.getType() + "', '" + event.getDescription() + "');";
 			st.execute(insertToDo);
 			
 			this.dbmanager.getConnection().commit();
@@ -398,30 +423,30 @@ public class UserManager {
 
 	public void removeTODOEvent(TODOEvent event){
 		// remove todo from db
-		Connection conn = null;
-		
-		try {
-			String removeToDo = "DELETE FROM " + DBManager.getDbName() + "." + DBManager.ColumnNames.TODOS.toString().toLowerCase() + " WHERE todo_id = " + event.getUniqueID() + ";";
-				
-			conn = DBManager.getInstance().getConnection();
-			conn.setAutoCommit(false);
-			
-			Statement st = conn.createStatement();
-			st.executeUpdate(removeToDo);	
-
-			// remove todo from collection
-			this.user.removeTODOEvent(event);
-			
-			conn.setAutoCommit(true);
-			conn.commit();
-		} catch (SQLException e) {
-			System.out.println("Error in executing delete todo request: " + e.getMessage());
-			try {
-				conn.rollback();
-			} catch (SQLException e1) {}
-		}
-		
-		// close connection ???		
+		 	Connection conn = null;
+		 		
+		 		try {
+		 			String removeToDo = "DELETE FROM " + DBManager.getDbName() + "." + DBManager.ColumnNames.TODOS.toString().toLowerCase() + " WHERE todo_id = " + event.getUniqueID() + ";";
+		 				
+					conn = DBManager.getInstance().getConnection();
+		 			conn.setAutoCommit(false);
+		 			
+		 			Statement st = conn.createStatement();
+		 			st.executeUpdate(removeToDo);	
+		 
+		 			// remove todo from collection
+		 			this.user.removeTODOEvent(event);
+		 		
+					conn.setAutoCommit(true);
+		 			conn.commit();
+		 		} catch (SQLException e) {
+		 		System.out.println("Error in executing delete todo request: " + e.getMessage());
+		 			try {
+		 				conn.rollback();
+		 			} catch (SQLException e1) {}
+		 		}
+		 		
+		 		// close connection ???		
 	}
 	
 	public void createTODO(String name, String description, String type){
@@ -429,37 +454,35 @@ public class UserManager {
 	}
 	
 	public void modifyTODO(String title, String description, String type, int id){
-		
 		Connection conn = null;
-		
-		try {
-			String updateToDo = "UPDATE " + DBManager.getDbName() + "." + DBManager.ColumnNames.TODOS.toString().toLowerCase() + " SET todo_name = ?, todo_type = ?, description = ? WHERE todo_id =" + id + ";";
-				
-			conn = DBManager.getInstance().getConnection();
-			conn.setAutoCommit(false);
-			
-			PreparedStatement ps = (PreparedStatement) conn.prepareStatement(updateToDo);
-			ps.setString(1, title);
-			ps.setString(2, type);
-			ps.setString(3, description);
-			
-			ps.executeUpdate();
-		    
-			// update todo in collection
-			this.user.modifyTODO(title, description, type, id);
-			
-			conn.commit();
-			conn.setAutoCommit(true);
-			ps.close();
-		} catch (SQLException e) {
-			System.out.println("Error in executing delete todo request: " + e.getMessage());
-			try {
-				conn.rollback();
-			} catch (SQLException e1) {}
-		}
-		
-		// close connection ???	
-		
+		 		
+				try {
+		 			String updateToDo = "UPDATE " + DBManager.getDbName() + "." + DBManager.ColumnNames.TODOS.toString().toLowerCase() + " SET todo_name = ?, todo_type = ?, description = ? WHERE todo_id =" + id + ";";
+		 			
+		 			conn = DBManager.getInstance().getConnection();
+		 			conn.setAutoCommit(false);
+		 			
+		 			PreparedStatement ps = (PreparedStatement) conn.prepareStatement(updateToDo);
+		 			ps.setString(1, title);
+		 			ps.setString(2, type);
+		 			ps.setString(3, description);
+		 			
+		 			ps.executeUpdate();
+		 		    
+		 			// update todo in collection
+		 			this.user.modifyTODO(title, description, type, id);
+		 			
+		 			conn.commit();
+		 			conn.setAutoCommit(true);
+		 			ps.close();
+		 	} catch (SQLException e) {
+		 		System.out.println("Error in executing delete todo request: " + e.getMessage());
+		 			try {
+		 				conn.rollback();
+		 			} catch (SQLException e1) {}
+		 		}
+		 		
+				// close connection ???	
 	}
 	
 	private void generateAllToDoFromDBForUser(User user2) {
@@ -486,15 +509,21 @@ public class UserManager {
 	}
 	
 	public TODOEvent getToDoById(int id) {
-		for (int i = 0; i < this.user.getTodos().size(); i++) {
-			if (this.user.getTodos().get(i).getUniqueID() == id) {
-				return this.user.getTodos().get(i);
-			}
-		}
-		return null;
-	}
+		
+		 for (int i = 0; i < this.user.getTodos().size(); i++) {
+		 	if (this.user.getTodos().get(i).getUniqueID() == id) {
+		 			
+		 			return this.user.getTodos().get(i);
+		 		}
+		 	}
+		 	
+		 	return null;
+    }
 	
-	/*--------------DebitAccounts ---------------*/
+	
+	
+		/*--------------DebitAccounts ---------------*/
+
 
 	 public ArrayList<DebitAccount> getDebitAccounts(){
 	        return (ArrayList<DebitAccount>) Collections.unmodifiableList(this.user.getDebitAccounts());
@@ -535,7 +564,6 @@ public class UserManager {
 	 }
 	 
 	 public double getMoney(){
-		 return this.user.getMoney().doubleValue();
+		 return this.user.getMoney();
 	 }
-
 }
