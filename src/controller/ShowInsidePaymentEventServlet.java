@@ -13,6 +13,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.websocket.Session;
 
 import model.events.DatedEvent;
 import model.events.PaymentEvent;
@@ -29,6 +30,10 @@ public class ShowInsidePaymentEventServlet extends HttpServlet {
 		String date = request.getParameter("dateForShow");
 		String status = request.getParameter("status");
 		UserManager manager = (UserManager) request.getSession().getAttribute("loggedUserManager");
+		if(manager == null || request.getSession().isNew()){
+			response.sendRedirect("HomePage.jsp");
+			return;
+		}
 		try{
 			LocalDate paramDate = LocalDate.parse(date);
 			ArrayList<PaymentEvent> events = new ArrayList<>();

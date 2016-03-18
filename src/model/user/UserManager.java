@@ -238,7 +238,7 @@ public class UserManager {
 	private void updateShoppingListStatusINDB(ShoppingList list) throws SQLException{
 		String statement = "UPDATE "+DBManager.getDbName()+"."+DBManager.ColumnNames.SHOPPING_LISTS+" SET is_paid = true WHERE sl_id = "+list.getUniqueIDForPayment();
 		try(Statement st = this.dbmanager.getConnection().createStatement()){
-			st.executeQuery(statement);
+			st.executeUpdate(statement);
 		}
 	}
 	
@@ -280,7 +280,7 @@ public class UserManager {
 			st.setString(1, name);
 			st.setDate(2, Date.valueOf(LocalDate.now()));
 			st.setBoolean(3, false);
-			st.setDouble(4, 0);
+			st.setInt(4, this.user.getUniqueDBId());
 			st.executeUpdate();
 		}
 	}
@@ -301,13 +301,13 @@ public class UserManager {
 		this.user.removeShoppingList(list);
 	}
 	
-	public List<ShoppingList> getShoppingLists(){
+	public ArrayList<ShoppingList> getShoppingLists(){
 		return this.user.getShoppingLists();
 	}
 	
 	public void createShoppingList(String name) throws IllegalAmountException, SQLException{
 		this.insertNewShoppingListINDB(name);
-		this.user.createShoppingList(name);
+		this.user.createShoppingList(this.getLastAddedListINDB(this.user.getUniqueDBId()));
 	}
 	
 	public void modifyShoppingList(ShoppingList entry, String name){
@@ -335,14 +335,15 @@ public class UserManager {
 				PreparedStatement stat = (PreparedStatement) this.dbmanager.getConnection().prepareStatement(statement);
 				
 				){
+			
 			stat.setString(1, newEntry.getName());
 			stat.setDouble(2,newEntry.getAmount());
 			stat.setInt(3, listID);
-			stat.execute();
+			stat.executeUpdate();
 		}
 	}
 	
-	private ShoppingEntry getLastAddedEntryINDB(int listID) throws SQLException{
+	private ShoppingEntry  getLastAddedEntryINDB(int listID) throws SQLException{
 		ShoppingEntry entry = null;
 		String statement = "SELECT se_id,item_name,item_value FROM "+DBManager.getDbName()+"."+DBManager.ColumnNames.SHOPPING_ENTRIES.toString()+" WHERE se_id = (SELECT MAX(se_id) FROM "
 																	+DBManager.getDbName()+"."+DBManager.ColumnNames.SHOPPING_ENTRIES.toString()+" HAVING list_id = "+listID+")";
@@ -354,6 +355,7 @@ public class UserManager {
 				int uniqueID = rs.getInt(1);
 				String name = rs.getString(2);
 				double amount = rs.getDouble(3);
+				System.out.println(uniqueID);
 				entry = new ShoppingEntry(name, amount, uniqueID);
 				break;
 			}
@@ -369,6 +371,28 @@ public class UserManager {
 				){
 			st.executeUpdate(statement);
 		}
+	}
+	
+	private ShoppingList getLastAddedListINDB(int userID) throws IllegalAmountException, SQLException{
+		ShoppingList list = null;
+		String statement = "SELECT sl_id,list_name,in_date,is_paid FROM "+DBManager.getDbName()+"."+DBManager.ColumnNames.SHOPPING_LISTS.toString()+" WHERE sl_id = (SELECT MAX(sl_id) FROM "
+																		 +DBManager.getDbName()+"."+DBManager.ColumnNames.SHOPPING_LISTS.toString()+" HAVING user_id = "+userID+")";		
+		
+		try(
+				Statement st = this.dbmanager.getConnection().createStatement();
+				ResultSet rs = st.executeQuery(statement);
+				){
+			while(rs.next()){
+				int uniqueID = rs.getInt(1);
+				String name = rs.getString(2);
+				LocalDate date = rs.getDate(3).toLocalDate();
+				boolean isPaid = rs.getBoolean(4);
+				list = new ShoppingList(name,isPaid,uniqueID,date,new ArrayList<ShoppingEntry>());
+				break;
+			}
+		}
+		return list;
+		
 	}
 	
 	/*--------------TODO LIST EVENT---------------*/
@@ -540,6 +564,6 @@ public class UserManager {
 	 }
 	 
 	 public double getMoney(){
-		 return this.user.getMoney().doubleValue();
+		 return this.user.getMoney();
 	 }
 }

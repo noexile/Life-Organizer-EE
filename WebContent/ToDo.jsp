@@ -1,6 +1,13 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ page errorPage="ErrorPage.jsp" %>
+		
+		<%
+			if(request.getSession().getAttribute("loggedUserManager") == null){		
+				response.sendRedirect("HomePage.jsp");
+			}
+		%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
@@ -17,7 +24,7 @@
 	<br />
 
 	<section class="right_side">
-	<table class="tasksSize" frame="box" bordercolor="cyan" class="tableSignUp" align="right">
+	<table class="tasksSize" frame="box" border="0" class="tableSignUp" align="right">
 			<c:forEach var="item" items="${sessionScope.todos}">
 			<tr>
 				<c:set var="todo" value="${item}" scope="request"/>

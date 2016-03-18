@@ -3,12 +3,13 @@
 <%@ page errorPage="ErrorPage.jsp" %>
 <!DOCTYPE html>
 <html>
-	<head>
-		<%
+	
+	<%
 			if(request.getSession().getAttribute("loggedUserManager") == null){		
 				response.sendRedirect("HomePage.jsp");
 			}
-		%>		
+		%>
+	<head>
 		<meta charset="utf-8">
 		<title>New Payment</title>
 		<link rel="stylesheet" href="css/styles.css">
@@ -21,22 +22,22 @@
 								<c:if test="${(ErrorMessage != null) && (ErrorMessage != ' ')}">
    								<center><b><font color="red"><c:out value="${ErrorMessage}"/></font></b></center>
 								</c:if>
-		<form action="CreateNewPaymentServlet" method="post">
+		<form action="PayShoppingListServlet" method="post">
 			<table class="right" frame="box" bordercolor= "cyan" class="tableSignUp">
 				<tr>
 					<td>
 						<a>
 							Payment Name
 							</br>
-							<input type="text" name="paymentName" value="${requestScope.nameForCreate}" style="height:20px; width:247px">
+							<input type="text" name="name" value="${requestScope.ShoppingList.title}" style="height:20px; width:247px">
 						</a>
 					</td>
 				</tr>
 				<tr>
 					<td>
 						<a>
-							<input type="radio" name="statuspayment" value="expense" checked="<c:if test="${requestScope.PaymentForCreate.isIncome == false}"><c:out value="${checked}"/></c:if>"> Expense<br>
-  							<input type="radio" name="statuspayment" value="earning" checked="<c:if test="${requestScope.PaymentForCreate.isIncome == true}"><c:out value="${checked}"/></c:if>"> Earning<br>
+							
+  							<input type="radio" checked="checked" name="statuspayment" value="expense" > Expense<br>
 						</a>
 					</td>
 				</tr>
@@ -45,7 +46,7 @@
 						<a>
 							Date:
 							</br>
-							<input type="date" name="date" value="${requestScope.date}" autocomplete="on">
+							<input type="date" name="date" value="${requestScope.ShoppingList.dateTime}" autocomplete="on">
 							
 						</a>
 					</td>
@@ -54,7 +55,7 @@
 						<a>
 							Description:
 							</br>
-							<textarea name="description" rows="4" cols="33" ><c:out value="${requestScope.description}"/></textarea>
+							<textarea name="description" rows="4" cols="33" ><c:out value="${requestScope.ShoppingList.description}"/></textarea>
 						</a>
 					</td>
 				</tr>
@@ -62,8 +63,8 @@
 				<tr>
 					<td>
 						<a>
-							<input type="radio" name="statuspaid" value="ispaid" checked="<c:if test="${requestScope.PaymentForCreate.isPaid == true}"><c:out value="${checked}"/></c:if>"> IsPaid<br>
-							<input type="radio" name="statuspaid" value="topay" checked="<c:if test="${requestScope.PaymentForCreate.isPaid == false}"><c:out value="${checked}"/></c:if>"> ToPay<br>
+							<input type="hidden" name="listId" value="${requestScope.ShoppingList.getUniqueIDForPayment()}">
+							<input type="hidden" name="statuspaid" value="true">
 						</a>
 					</td>
 				</tr>
@@ -72,13 +73,13 @@
 							Amount:
 							</br>
 						<a>
-							<input type="number" name="amount" step="0.01" min="0" max="10000.00" value="${requestScope.amount}">
+							<input type="number" name="amount" step="0.01" min="0" value="${requestScope.ShoppingList.amount}">
 						</a>
 					</td>
 				</tr>
 				<tr>
 					<td>
-						<input type="submit" value="Save">
+						<input type="submit" value="Pay it">
 						<a href="main.jsp"><input type="button" value="Cancel"></a>
 					</td>
 				</tr>

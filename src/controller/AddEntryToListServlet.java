@@ -21,6 +21,10 @@ public class AddEntryToListServlet extends HttpServlet {
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		HttpSession session = request.getSession();
 		UserManager manager = (UserManager) session.getAttribute("loggedUserManager");
+		if(manager == null || session.isNew()){
+			response.sendRedirect("HomePage.jsp");
+			return;
+		}
 		int uniqueID = Integer.parseInt(request.getParameter("idList"));
 		ShoppingList currentList = null;
 		for(ShoppingList list : manager.getShoppingLists()){

@@ -1,8 +1,14 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+    <%@ page errorPage="ErrorPage.jsp" %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
+<%
+			if(request.getSession().getAttribute("loggedUserManager") == null){		
+				response.sendRedirect("HomePage.jsp");
+			}
+		%>
 <meta charset="utf-8">
 	<title>MyAccounts</title>
 	<link rel="stylesheet" href="css/MainStyle.css">
@@ -16,8 +22,8 @@
 						<p id="board">Debit<p id="r_board">Credit</p></p>
 						<p style="font-size:24px" style="text-align:left">Account name:</p>
 						<p style="font-size:24px" style="text-align:left">Amount:</p>
-						<p style="font-size:24px" style="text-align:left"><a href="AccountHistory.jsp">Account History</a></p>
-						<p style="float:right" style="text-align:left" style="padding:30px 350px"><a href="NewAccount.jsp"><input type="button" value="Create a new account" style="height:25px; width:200px"></a>
+						<p style="font-size:24px" style="text-align:left"><a href="AccountHistory.html">Account History</a></p>
+						<p style="float:right" style="text-align:left" style="padding:30px 350px"><a href="NewAccount.html"><input type="button" value="Create a new account" style="height:25px; width:200px"></a>
 					</article><br/><br/><br/>
 			<nav>
 				<%@ include file="MenuMap.jsp" %>

@@ -23,10 +23,11 @@ public class DBUserDAO implements IUserDAO {
 	public void addUser(User user) {
 		PreparedStatement st = null;
 		try {
-			st = DBManager.getInstance().getConnection().prepareStatement("INSERT INTO " + DBManager.getDbName() + "." + DBManager.ColumnNames.USERS.toString().toLowerCase() + " (username, pass, email) VALUES ( ? , ? , ? )" );
+			st = DBManager.getInstance().getConnection().prepareStatement("INSERT INTO " + DBManager.getDbName() + "." + DBManager.ColumnNames.USERS.toString().toLowerCase() + " (username, pass, email, money) VALUES ( ? , ? , ? , ?)" );
 			st.setString(1, user.getUserName());
 			st.setString(2, user.getPassword());
 			st.setString(3, user.getEmail());
+			st.setDouble(4, user.getMoney());
 			st.execute();
 		
 		} catch (SQLException e) {
@@ -44,14 +45,15 @@ public class DBUserDAO implements IUserDAO {
 		
 		try {
 			Statement st = DBManager.getInstance().getConnection().createStatement();
-			ResultSet rs = st.executeQuery("SELECT username, user_id, pass, email FROM " + DBManager.getDbName() + "." + DBManager.ColumnNames.USERS.toString().toLowerCase() + ";");
+			ResultSet rs = st.executeQuery("SELECT username, user_id, pass, email, money FROM " + DBManager.getDbName() + "." + DBManager.ColumnNames.USERS.toString().toLowerCase() + ";");
 			
 			while(rs.next()) {
 				String username = rs.getString("username");
 				String password = rs.getString("pass");
 				final int uniqueDBId = rs.getInt("user_id");
 				String email = rs.getString("email");
-				User newUser = new User(username, password, uniqueDBId, email);
+				double money = rs.getDouble("money");
+				User newUser = new User(username, password, uniqueDBId, email, money);
 				users.add(newUser);
 			}
 			
@@ -93,7 +95,7 @@ public class DBUserDAO implements IUserDAO {
 		
 		for(User use : this.getAllUsers()){
 			if(use.getUserName().equals(user.getUserName())){
-				theNewUserWithID = new User(use.getUserName(), use.getPassword(), use.getUniqueDBId(), use.getEmail());
+				theNewUserWithID = new User(use.getUserName(), use.getPassword(), use.getUniqueDBId(), use.getEmail(), use.getMoney());
 			}
 		}
 		

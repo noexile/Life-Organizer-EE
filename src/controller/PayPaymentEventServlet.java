@@ -17,6 +17,10 @@ public class PayPaymentEventServlet extends HttpServlet {
        
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		UserManager manager = (UserManager) request.getSession().getAttribute("loggedUserManager");
+		if(manager == null || request.getSession().isNew()){
+			response.sendRedirect("HomePage.jsp");
+			return;
+		}
 		int id = Integer.parseInt(request.getParameter("currPayment"));
 		PaymentEvent eventForPay = null;
 		

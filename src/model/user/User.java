@@ -1,6 +1,8 @@
 package model.user;
 
 import model.accounts.DebitAccount;
+import model.dataBase.DBManager;
+import model.dataBase.DBUserDAO;
 import model.events.DatedEvent;
 import model.events.NotificationEvent;
 import model.events.PaymentEvent;
@@ -11,6 +13,8 @@ import model.exceptions.IllegalAmountException;
 import model.exceptions.IncorrectInputException;
 import model.exceptions.NotExistException;
 import java.math.BigDecimal;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -32,12 +36,12 @@ public class User {
 	private ArrayList<NotificationEvent> notifications;
 	private BigDecimal money;
 
-	public User(String userName, String password, int uniqueDBId, String email) {
+	public User(String userName, String password, int uniqueDBId, String email, double money) {
         this.setUserName(userName);
         this.setPassword(password);
         this.uniqueDBId = uniqueDBId;
         this.email = email;
-        this.money = new BigDecimal(0.1);
+        this.money = new BigDecimal(money);
         generateCollectionsForUser();
 	}
 	
@@ -149,6 +153,7 @@ public class User {
 		
 		BigDecimal tempDecimal = new BigDecimal(amount);
 		this.money = this.money.add(tempDecimal);
+		this.modifyMoneyAfterPayment(this.money.doubleValue());
 	}
 	
 	/*--------------SHOPPING LIST EVENT---------------*/
@@ -165,19 +170,14 @@ public class User {
 		}
 		this.shoppingList.remove(list);
 	}
+
+	protected void createShoppingList(ShoppingList list) throws IllegalAmountException {
+		
+		this.shoppingList.add(list);
+	}
 	
 	protected ArrayList<ShoppingList> getShoppingLists(){
 		return this.shoppingList;
-	}
-
-	protected void createShoppingList(String name) throws IllegalAmountException {
-		if (name.trim().isEmpty()) {
-			try {
-				throw new IncorrectInputException("You cannot create a shopping list without a name!");
-			} catch (IncorrectInputException e) {}
-		}
-		
-		this.shoppingList.add(new ShoppingList(name));
 	}
 	
 	protected void modifyShoppingList(ShoppingList entry, String name) {
@@ -227,11 +227,11 @@ public class User {
 				e.printStackTrace();
 			}
 		}
-		
+		list.setPaid(true);
 		double temp = -amount;
 		BigDecimal tempDecimal = new BigDecimal(temp);
 		this.money.add(tempDecimal);
-		
+		this.modifyMoneyAfterPayment(this.money.doubleValue());
 	}
 	
 	
@@ -402,9 +402,23 @@ public class User {
 		return this.email;
 	}
 
-	protected BigDecimal getMoney() {
+	public double getMoney() {
+		double money = this.money.doubleValue();
 		return money;
 	}
 	
+	private void modifyMoneyAfterPayment(double money){
+		String statement = "UPDATE "+DBManager.getDbName()+"."+DBManager.ColumnNames.USERS.toString()+" SET money = "+money+" WHERE user_id = "+uniqueDBId;
+		try(
+				Statement st = DBManager.getInstance().getConnection().createStatement();
+				){
+			st.executeUpdate(statement);
+			
+		} catch (SQLException e) {
+			System.out.println("problem with update money");
+			e.printStackTrace();
+		}
+		
+	}
 	
 }

@@ -31,8 +31,16 @@ public class ShoppingList extends PaymentEvent{
 	}
 	
 	// methods
-	public void addEntry(ShoppingEntry entry) {
+	public void addEntry(ShoppingEntry entry){
 		this.shoppingEntries.add(entry);
+		try {
+			this.setAmount(this.getAmountOfAllEntries());
+			String newDesc = this.getDescription().concat(entry.getName()+" : "+entry.getAmount()+"\n");
+			this.setDescription(newDesc);
+		} catch (IllegalAmountException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 

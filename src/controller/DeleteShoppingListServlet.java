@@ -2,6 +2,7 @@ package controller;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.ArrayList;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -21,34 +22,48 @@ public class DeleteShoppingListServlet extends HttpServlet {
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		HttpSession session = request.getSession();
 		UserManager manager = (UserManager) session.getAttribute("loggedUserManager");
+		if(session.getAttribute("loggedUserManager") == null || session.isNew()){
+			response.sendRedirect("HomePage.jsp");
+			return;
+		}
 		int uniqueID = Integer.parseInt(request.getParameter("idList"));
 		
 		ShoppingList currentList = null;
-		for(ShoppingList list : manager.getShoppingLists()){
+		
+		ArrayList<ShoppingList> lists = manager.getShoppingLists();
+		
+		for(ShoppingList list : lists){
 			if(list.getUniqueIDForPayment() == uniqueID){
 				currentList = list;
 				break;
 			}
 		}
 		
-		
-		
-		for(ShoppingEntry entry : currentList.getShoppingEntries()){
-				try {
-					manager.removeItemFromShoppingList(currentList, entry);
-				} catch (SQLException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}	
-		}
+		ArrayList<ShoppingEntry> entries = currentList.getShoppingEntries();
 		
 		try {
 			manager.removeShoppingList(currentList);
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
+			System.out.println("problem with delete current list");
 			e.printStackTrace();
 		}
 		
+		for(int i=0; i<entries.size(); i++){
+				try {
+					manager.removeItemFromShoppingList(currentList, entries.get(i));
+				} catch (SQLException e) {
+					System.out.println("problem with delete entries of current list");
+					e.printStackTrace();
+				}	
+		}
+		
+		if(manager.getShoppingLists().size() == 0){
+			request.setAttribute("haveShoppingLists", false);
+			request.getRequestDispatcher("MyShoppingList.jsp").forward(request, response);
+			return;
+		}
+		request.setAttribute("haveShoppingLists", true);
+		request.setAttribute("listsToShow", manager.getShoppingLists());
 		request.getRequestDispatcher("MyShoppingList.jsp").forward(request, response);
 	}
 
