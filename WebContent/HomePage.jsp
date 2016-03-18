@@ -1,6 +1,5 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
-    <%@ page errorPage="ErrorPage.jsp" %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <head>
   <meta charset="utf-8">
@@ -23,7 +22,7 @@
 				<label><input type="checkbox" name="remember_me" id="remember_me">	Remember me on this computer</label>
 				</p>
 				<p class="submit"><input type="submit" value="Login"></p>
-				<p><a href="SignUp.jsp">New to Life Organizer ? Click here to Register</a></p>
+				<p><a href="SignUp.html">New to Life Organizer ? Click here to Register</a></p>
 			</form>
 		</div>
 	</section>

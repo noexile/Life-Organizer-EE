@@ -238,7 +238,7 @@ public class UserManager {
 	private void updateShoppingListStatusINDB(ShoppingList list) throws SQLException{
 		String statement = "UPDATE "+DBManager.getDbName()+"."+DBManager.ColumnNames.SHOPPING_LISTS+" SET is_paid = true WHERE sl_id = "+list.getUniqueIDForPayment();
 		try(Statement st = this.dbmanager.getConnection().createStatement()){
-			st.executeUpdate(statement);
+			st.executeQuery(statement);
 		}
 	}
 	
@@ -280,7 +280,7 @@ public class UserManager {
 			st.setString(1, name);
 			st.setDate(2, Date.valueOf(LocalDate.now()));
 			st.setBoolean(3, false);
-			st.setInt(4, this.user.getUniqueDBId());
+			st.setDouble(4, 0);
 			st.executeUpdate();
 		}
 	}
@@ -301,13 +301,13 @@ public class UserManager {
 		this.user.removeShoppingList(list);
 	}
 	
-	public ArrayList<ShoppingList> getShoppingLists(){
+	public List<ShoppingList> getShoppingLists(){
 		return this.user.getShoppingLists();
 	}
 	
 	public void createShoppingList(String name) throws IllegalAmountException, SQLException{
 		this.insertNewShoppingListINDB(name);
-		this.user.createShoppingList(this.getLastAddedListINDB(this.user.getUniqueDBId()));
+		this.user.createShoppingList(name);
 	}
 	
 	public void modifyShoppingList(ShoppingList entry, String name){
@@ -335,18 +335,18 @@ public class UserManager {
 				PreparedStatement stat = (PreparedStatement) this.dbmanager.getConnection().prepareStatement(statement);
 				
 				){
-			
 			stat.setString(1, newEntry.getName());
 			stat.setDouble(2,newEntry.getAmount());
 			stat.setInt(3, listID);
-			stat.executeUpdate();
+			stat.execute();
 		}
 	}
 	
-	private ShoppingEntry  getLastAddedEntryINDB(int listID) throws SQLException{
+	private ShoppingEntry getLastAddedEntryINDB(int listID) throws SQLException{
 		ShoppingEntry entry = null;
-		String statement = "SELECT se_id,item_name,item_value FROM "+DBManager.getDbName()+"."+DBManager.ColumnNames.SHOPPING_ENTRIES.toString()+" WHERE se_id = (SELECT MAX(se_id) FROM "
-																	+DBManager.getDbName()+"."+DBManager.ColumnNames.SHOPPING_ENTRIES.toString()+" HAVING list_id = "+listID+")";
+		String statement = "SELECT se_id,item_name,item_value FROM "+DBManager.getDbName()+"."+DBManager.ColumnNames.SHOPPING_ENTRIES.toString()+" WHERE se_id = (SELECT MAX(se_id) FROM " + 
+		DBManager.getDbName()+"."+DBManager.ColumnNames.SHOPPING_ENTRIES.toString()+" HAVING list_id = "+listID;
+		
 		try(
 				Statement st = this.dbmanager.getConnection().createStatement();
 				ResultSet rs = st.executeQuery(statement);
@@ -355,7 +355,6 @@ public class UserManager {
 				int uniqueID = rs.getInt(1);
 				String name = rs.getString(2);
 				double amount = rs.getDouble(3);
-				System.out.println(uniqueID);
 				entry = new ShoppingEntry(name, amount, uniqueID);
 				break;
 			}
@@ -366,33 +365,9 @@ public class UserManager {
 	
 	private void deleteShoppingEntryFromDB(ShoppingEntry entry) throws SQLException{
 		String statement = "DELETE FROM "+DBManager.getDbName()+"."+DBManager.ColumnNames.SHOPPING_ENTRIES.toString()+" WHERE se_id = "+entry.getUniqueID();
-		try(
-				Statement st = this.dbmanager.getConnection().createStatement();
-				){
+		try(Statement st = this.dbmanager.getConnection().createStatement()) {
 			st.executeUpdate(statement);
 		}
-	}
-	
-	private ShoppingList getLastAddedListINDB(int userID) throws IllegalAmountException, SQLException{
-		ShoppingList list = null;
-		String statement = "SELECT sl_id,list_name,in_date,is_paid FROM "+DBManager.getDbName()+"."+DBManager.ColumnNames.SHOPPING_LISTS.toString()+" WHERE sl_id = (SELECT MAX(sl_id) FROM "
-																		 +DBManager.getDbName()+"."+DBManager.ColumnNames.SHOPPING_LISTS.toString()+" HAVING user_id = "+userID+")";		
-		
-		try(
-				Statement st = this.dbmanager.getConnection().createStatement();
-				ResultSet rs = st.executeQuery(statement);
-				){
-			while(rs.next()){
-				int uniqueID = rs.getInt(1);
-				String name = rs.getString(2);
-				LocalDate date = rs.getDate(3).toLocalDate();
-				boolean isPaid = rs.getBoolean(4);
-				list = new ShoppingList(name,isPaid,uniqueID,date,new ArrayList<ShoppingEntry>());
-				break;
-			}
-		}
-		return list;
-		
 	}
 	
 	/*--------------TODO LIST EVENT---------------*/
@@ -423,30 +398,30 @@ public class UserManager {
 
 	public void removeTODOEvent(TODOEvent event){
 		// remove todo from db
-		 	Connection conn = null;
-		 		
-		 		try {
-		 			String removeToDo = "DELETE FROM " + DBManager.getDbName() + "." + DBManager.ColumnNames.TODOS.toString().toLowerCase() + " WHERE todo_id = " + event.getUniqueID() + ";";
-		 				
-					conn = DBManager.getInstance().getConnection();
-		 			conn.setAutoCommit(false);
-		 			
-		 			Statement st = conn.createStatement();
-		 			st.executeUpdate(removeToDo);	
-		 
-		 			// remove todo from collection
-		 			this.user.removeTODOEvent(event);
-		 		
-					conn.setAutoCommit(true);
-		 			conn.commit();
-		 		} catch (SQLException e) {
-		 		System.out.println("Error in executing delete todo request: " + e.getMessage());
-		 			try {
-		 				conn.rollback();
-		 			} catch (SQLException e1) {}
-		 		}
-		 		
-		 		// close connection ???		
+		Connection conn = null;
+		
+		try {
+			String removeToDo = "DELETE FROM " + DBManager.getDbName() + "." + DBManager.ColumnNames.TODOS.toString().toLowerCase() + " WHERE todo_id = " + event.getUniqueID() + ";";
+				
+			conn = DBManager.getInstance().getConnection();
+			conn.setAutoCommit(false);
+			
+			Statement st = conn.createStatement();
+			st.executeUpdate(removeToDo);	
+
+			// remove todo from collection
+			this.user.removeTODOEvent(event);
+			
+			conn.setAutoCommit(true);
+			conn.commit();
+		} catch (SQLException e) {
+			System.out.println("Error in executing delete todo request: " + e.getMessage());
+			try {
+				conn.rollback();
+			} catch (SQLException e1) {}
+		}
+		
+		// close connection ???		
 	}
 	
 	public void createTODO(String name, String description, String type){
@@ -454,35 +429,37 @@ public class UserManager {
 	}
 	
 	public void modifyTODO(String title, String description, String type, int id){
+		
 		Connection conn = null;
-		 		
-				try {
-		 			String updateToDo = "UPDATE " + DBManager.getDbName() + "." + DBManager.ColumnNames.TODOS.toString().toLowerCase() + " SET todo_name = ?, todo_type = ?, description = ? WHERE todo_id =" + id + ";";
-		 			
-		 			conn = DBManager.getInstance().getConnection();
-		 			conn.setAutoCommit(false);
-		 			
-		 			PreparedStatement ps = (PreparedStatement) conn.prepareStatement(updateToDo);
-		 			ps.setString(1, title);
-		 			ps.setString(2, type);
-		 			ps.setString(3, description);
-		 			
-		 			ps.executeUpdate();
-		 		    
-		 			// update todo in collection
-		 			this.user.modifyTODO(title, description, type, id);
-		 			
-		 			conn.commit();
-		 			conn.setAutoCommit(true);
-		 			ps.close();
-		 	} catch (SQLException e) {
-		 		System.out.println("Error in executing delete todo request: " + e.getMessage());
-		 			try {
-		 				conn.rollback();
-		 			} catch (SQLException e1) {}
-		 		}
-		 		
-				// close connection ???	
+		
+		try {
+			String updateToDo = "UPDATE " + DBManager.getDbName() + "." + DBManager.ColumnNames.TODOS.toString().toLowerCase() + " SET todo_name = ?, todo_type = ?, description = ? WHERE todo_id =" + id + ";";
+				
+			conn = DBManager.getInstance().getConnection();
+			conn.setAutoCommit(false);
+			
+			PreparedStatement ps = (PreparedStatement) conn.prepareStatement(updateToDo);
+			ps.setString(1, title);
+			ps.setString(2, type);
+			ps.setString(3, description);
+			
+			ps.executeUpdate();
+		    
+			// update todo in collection
+			this.user.modifyTODO(title, description, type, id);
+			
+			conn.commit();
+			conn.setAutoCommit(true);
+			ps.close();
+		} catch (SQLException e) {
+			System.out.println("Error in executing delete todo request: " + e.getMessage());
+			try {
+				conn.rollback();
+			} catch (SQLException e1) {}
+		}
+		
+		// close connection ???	
+		
 	}
 	
 	private void generateAllToDoFromDBForUser(User user2) {
@@ -509,21 +486,15 @@ public class UserManager {
 	}
 	
 	public TODOEvent getToDoById(int id) {
-		
-		 for (int i = 0; i < this.user.getTodos().size(); i++) {
-		 	if (this.user.getTodos().get(i).getUniqueID() == id) {
-		 			
-		 			return this.user.getTodos().get(i);
-		 		}
-		 	}
-		 	
-		 	return null;
-    }
+		for (int i = 0; i < this.user.getTodos().size(); i++) {
+			if (this.user.getTodos().get(i).getUniqueID() == id) {
+				return this.user.getTodos().get(i);
+			}
+		}
+		return null;
+	}
 	
-	
-	
-		/*--------------DebitAccounts ---------------*/
-
+	/*--------------DebitAccounts ---------------*/
 
 	 public ArrayList<DebitAccount> getDebitAccounts(){
 	        return (ArrayList<DebitAccount>) Collections.unmodifiableList(this.user.getDebitAccounts());
@@ -564,6 +535,7 @@ public class UserManager {
 	 }
 	 
 	 public double getMoney(){
-		 return this.user.getMoney();
+		 return this.user.getMoney().doubleValue();
 	 }
+
 }

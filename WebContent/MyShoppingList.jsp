@@ -1,15 +1,9 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@ page errorPage="ErrorPage.jsp" %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
-		<%
-			if(request.getSession().getAttribute("loggedUserManager") == null){		
-				response.sendRedirect("HomePage.jsp");
-			}
-		%>
 <meta charset="utf-8">
 	<title>MyShoppingList</title>
 	<link rel="stylesheet" href="css/MainStyle.css">
@@ -43,7 +37,7 @@
 				<font size="6" color="red">You do not created Shopping Lists</font>
 				</c:if>
 			</table>
-			<center><a href="AddShoppingList.jsp"><button>Add Shopping list</button></a></center>
+			
 		</secion>
 		</header>
 		<%@ include file="MenuMap.jsp" %>	

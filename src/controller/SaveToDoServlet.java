@@ -9,28 +9,27 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-@WebServlet("/ToDoModifyServlet")
-public class ToDoModifyServlet extends HttpServlet {
+import model.events.TODOEvent;
+import model.user.UserManager;
+
+@WebServlet("/SaveToDoServlet")
+public class SaveToDoServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-
-		RequestDispatcher rd = request.getRequestDispatcher("EditToDo.jsp");
 		
+		RequestDispatcher rd = request.getRequestDispatcher("ToDo.jsp");
+		
+		int id = Integer.valueOf((String) request.getSession().getAttribute("id"));
 		String title = request.getParameter("title");
 		String description = request.getParameter("description");
 		String type = request.getParameter("type");
-		String id = request.getParameter("id");
 
-		if (title == null || description == null || type == null) {
-			// error -> rd = request.getRequestDispatcher("SOME ERROR.jsp");
-			rd.forward(request, response);
-		}		
+		UserManager manager = (UserManager) request.getSession().getAttribute("loggedUserManager");
+
+		// update event
+		manager.modifyTODO(title, description, type, id);
 		
-		request.getSession().setAttribute("title", title);
-		request.getSession().setAttribute("description", description);
-		request.getSession().setAttribute("type", type);
-		request.getSession().setAttribute("id", id);
 		rd.forward(request, response);
 	}
 

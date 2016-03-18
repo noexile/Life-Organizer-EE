@@ -1,14 +1,9 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@ page errorPage="ErrorPage.jsp" %>
+
 <!DOCTYPE html>
 <html>
 	<head>
-		<%
-			if(request.getSession().getAttribute("loggedUserManager") == null){		
-				response.sendRedirect("HomePage.jsp");
-			}
-		%>		
 		<meta charset="utf-8">
 		<title>New Payment</title>
 		<link rel="stylesheet" href="css/styles.css">
@@ -72,7 +67,7 @@
 							Amount:
 							</br>
 						<a>
-							<input type="number" name="amount" step="0.01" min="0" max="10000.00" value="${requestScope.amount}">
+							<input type="number" name="amount" step="0.01" min="0" value="${requestScope.amount}">
 						</a>
 					</td>
 				</tr>

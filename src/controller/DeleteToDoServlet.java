@@ -1,35 +1,33 @@
 package controller;
 
 import java.io.IOException;
+
+import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import model.events.PaymentEvent;
+import model.events.TODOEvent;
 import model.user.UserManager;
 
-
-@WebServlet("/PayPaymentEventServlet")
-public class PayPaymentEventServlet extends HttpServlet {
+@WebServlet("/DeleteToDoServlet")
+public class DeleteToDoServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		
+		RequestDispatcher rd = request.getRequestDispatcher("ToDo.jsp");
+		int id = Integer.valueOf((String) request.getSession().getAttribute("id"));
+		
 		UserManager manager = (UserManager) request.getSession().getAttribute("loggedUserManager");
-		int id = Integer.parseInt(request.getParameter("currPayment"));
-		PaymentEvent eventForPay = null;
 		
-		for(PaymentEvent event : manager.getEvents()){
-			if(event.getUniqueIDForPayment() == id){
-				eventForPay = event;
-				break;
-			}
-		}
+		TODOEvent todo = manager.getToDoById(id);		
 		
-		manager.pay(eventForPay);
-		System.out.println(manager.getMoney());
-		request.getRequestDispatcher("main.jsp").forward(request, response);
+		manager.removeTODOEvent(todo);
+		
+		rd.forward(request, response);
 	}
 
 }

@@ -1,17 +1,10 @@
 <%@page import="java.time.LocalDate"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page import="model.user.User"%>
 <%@ page import="model.user.UserManager"%>
 <%
 	UserManager manager = (UserManager) session.getAttribute("loggedUserManager");
 %>
-<%@ page errorPage="ErrorPage.jsp" %>
-		<%
-			if(request.getSession().getAttribute("loggedUserManager") == null){		
-				response.sendRedirect("HomePage.jsp");
-			}
-		%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
@@ -24,7 +17,7 @@
 	 <a href="main.jsp"><p>
 			<img src="resources/MainLogo.jpg" alt="logo" /></a>
 	<big>Hello <%=(manager == null ? "" : manager.getUserName())%></big><br>
-	<center><font size="6" <c:if test="${sessionScope.loggedUserManager.getMoney() < 0}">color = "red"</c:if>> Your Balance: <%=(manager == null ? "" : manager.getMoney())%></font></center>
+	<center><font size="6">Your Balance: <%=(manager == null ? "" : manager.getMoney())%></font></center>
 		</p>
 	<table border="2" bordercolor="cyan" cellpadding="10">
 		<div class="test">
@@ -37,7 +30,7 @@
 			<form action="ShowInsidePaymentEventServlet" method="post">
 				<input type="hidden" name="dateForShow" value="${LocalDate.now()}">
 				<input type="hidden" name="status" value="all"> 
-				<input type="submit" value="Show Payments for today"
+				<input type="submit" value="Show tasks for today"
 					style="height: 50px; width: 500px"> 
 			</form>
 			</br> </br> <a

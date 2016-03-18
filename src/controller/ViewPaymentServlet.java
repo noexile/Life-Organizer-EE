@@ -18,11 +18,7 @@ public class ViewPaymentServlet extends HttpServlet {
 
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		
-		if(request.getSession().getAttribute("loggedUserManager") == null || request.getSession().isNew()){
-			response.sendRedirect("HomePage.jsp");
-			return;
-		}
+		System.out.println(request.getParameter("currPayment"));
 		int id = Integer.parseInt(request.getParameter("currPayment"));
 		PaymentEvent e = null;
 		for(PaymentEvent event : ((UserManager)request.getSession().getAttribute("loggedUserManager")).getEvents()){

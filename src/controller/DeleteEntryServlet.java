@@ -22,10 +22,6 @@ public class DeleteEntryServlet extends HttpServlet {
 		
 		HttpSession session = request.getSession();
 		UserManager manager = (UserManager) session.getAttribute("loggedUserManager");
-		if(session.getAttribute("loggedUserManager") == null || session.isNew()){
-			response.sendRedirect("HomePage.jsp");
-			return;
-		}
 		int uniqueID = Integer.parseInt(request.getParameter("idList"));
 		ShoppingList currentList = null;
 		for(ShoppingList list : manager.getShoppingLists()){

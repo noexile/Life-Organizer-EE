@@ -21,10 +21,7 @@ public class AddToDoServlet extends HttpServlet {
 		
 		RequestDispatcher dispatcher = request.getRequestDispatcher("AddToDo.jsp");
 		HttpSession session = request.getSession();
-		if(session.getAttribute("loggedUserManager") == null || session.isNew()){
-			response.sendRedirect("HomePage.jsp");
-			return;
-		}
+		
 		String name = request.getParameter("name");
 		String term = request.getParameter("term");
 		String desc = request.getParameter("desc");

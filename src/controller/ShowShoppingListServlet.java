@@ -22,10 +22,6 @@ public class ShowShoppingListServlet extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		HttpSession session = request.getSession();
 		UserManager manager = (UserManager) session.getAttribute("loggedUserManager");
-		if(session.getAttribute("loggedUserManager") == null || session.isNew()){
-			response.sendRedirect("HomePage.jsp");
-			return;
-		}
 		List<ShoppingList> listsToShow = manager.getShoppingLists();
 		if(listsToShow.size() == 0){
 			request.setAttribute("haveShoppingLists", false);
@@ -45,9 +41,6 @@ public class ShowShoppingListServlet extends HttpServlet {
 		
 		HttpSession session = request.getSession();
 		UserManager manager = (UserManager) session.getAttribute("loggedUserManager");
-		if(session.getAttribute("loggedUserManager") == null){
-			response.sendRedirect("HomePage.jsp");
-		}
 		int uniqueID = Integer.parseInt(request.getParameter("currList"));
 		ShoppingList currentList = null;
 		for(ShoppingList list : manager.getShoppingLists()){
